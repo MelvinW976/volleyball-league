@@ -3,12 +3,11 @@ using UnityEngine.Rendering;
 
 public class VolleyballPass : MonoBehaviour
 {
-    public float passForce = 8f;            // Strength of the pass
     public Rigidbody ballRb;                // Reference to the ball's Rigidbody
     public Transform passTarget; // The teammate or direction to pass to
 
     private bool canPass = false;           // Flag to check if the ball is in range
-    private float timeToTarget = 1f;
+    private float timeToTarget = 2f;
 
     [System.Obsolete]
     void Update()
