@@ -1,13 +1,13 @@
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class VolleyballPass : MonoBehaviour
 {
     public Rigidbody ballRb;                // Reference to the ball's Rigidbody
     public Transform passTarget; // The teammate or direction to pass to
+    private float passRadius = 2f;
 
     private bool canPass = false;           // Flag to check if the ball is in range
-    private float timeToTarget = 2f;
+    private float timeToTarget = 1.5f;
 
     [System.Obsolete]
     void Update()
@@ -19,9 +19,16 @@ public class VolleyballPass : MonoBehaviour
         }
     }
 
+    Vector3 AddRandomness(Vector3 targetPoint)
+    {
+        Vector2 randomPoint = Random.insideUnitCircle * passRadius;
+        Vector3 passPoint = targetPoint + new Vector3(randomPoint.x, randomPoint.y, 0.0f);
+        return passPoint;
+    }
+
     Vector3 CalculateVelocity(Vector3 startPoint, Vector3 endPoint)
     {
-        Vector3 toTarget = endPoint - startPoint;
+        Vector3 toTarget = AddRandomness(endPoint - startPoint);
         Vector3 toTargetXZ = toTarget;
         toTargetXZ.y = 0;
 
