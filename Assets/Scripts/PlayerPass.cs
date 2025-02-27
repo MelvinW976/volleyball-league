@@ -3,12 +3,14 @@ using UnityEngine;
 public class PlayerPass : MonoBehaviour
 {
     public Rigidbody ballRb;                // Reference to the ball's Rigidbody
-    public Transform passTarget; // The teammate or direction to pass to
-    private float passRadius = 1f;
-
-    private bool canPass = false;           // Flag to check if the ball is in range
-    private float timeToTarget = 2f;
+    public Transform passTarget;             // The teammate or direction to pass to
+    private readonly float passRadius = 1f;
+    private readonly float timeToTarget = 2f;
+    private bool canPass = false;
     private PlayerManager playerManager;
+
+    [Header("Landing Indicator")]
+    public CircleRenderer circleRenderer;    // 替换原来的 landingIndicator 和 currentIndicator
 
     void Start(){
         playerManager = PlayerManager.Instance;
@@ -17,12 +19,19 @@ public class PlayerPass : MonoBehaviour
         }
     }
 
-    [System.Obsolete]
     void Update()
     {
         // Check for pass input
         if (canPass && Input.GetKeyDown(KeyCode.K)) {
             PerformPass();
+        }
+        if (ballRb != null && ballRb.linearVelocity.sqrMagnitude > 0.1f) 
+        {
+            ShowLandingIndicator();
+        }
+        else 
+        {
+            HideLandingIndicator();
         }
     }
 
@@ -54,17 +63,14 @@ public class PlayerPass : MonoBehaviour
         return result;
     }
 
-
-    [System.Obsolete]
     private void PerformPass()
     {
         Vector3 startPoint = ballRb.position;
         Vector3 endPoint = passTarget.position;
         Vector3 initialVelocity = CalculateVelocity(startPoint, endPoint);
 
-
         // Apply an upward and forward force to the ball
-        ballRb.velocity = Vector3.zero; // Reset the ball's velocity
+        ballRb.linearVelocity = Vector3.zero; // Reset the ball's velocity
         ballRb.angularVelocity = Vector3.zero; // Reset the ball's rotation
         ballRb.AddForce(initialVelocity, ForceMode.VelocityChange);
         Debug.Log("Passed the ball!");
@@ -87,6 +93,54 @@ public class PlayerPass : MonoBehaviour
         if (other.gameObject.CompareTag("Ball"))
         {
             canPass = false;
+        }
+    }
+
+    private void ShowLandingIndicator()
+    {
+        if (circleRenderer == null || ballRb == null) return;
+        
+        // 计算球的当前运动轨迹落点
+        Vector3 velocity = ballRb.linearVelocity;
+        Vector3 position = ballRb.position;
+        
+        // 忽略垂直速度很小的计算
+        if (Mathf.Abs(velocity.y) < 0.1f && position.y < 0.5f) 
+        {
+            HideLandingIndicator();
+            return;
+        }
+
+        // 使用抛物线运动公式计算落地时间
+        float g = Physics.gravity.magnitude;
+        float y0 = position.y;
+        float discriminant = velocity.y * velocity.y + 2 * g * y0;
+        
+        if (discriminant < 0) 
+        {
+            // 无实数解时（球不会落地）不显示
+            HideLandingIndicator();
+            return;
+        }
+
+        float timeToLand = (velocity.y + Mathf.Sqrt(discriminant)) / g;
+        
+        // 计算水平位移
+        Vector3 horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
+        Vector3 landingPos = position + horizontalVelocity * timeToLand;
+        
+        // 确保落点在地面上
+        landingPos.y = 0;
+        
+        // 显示指示器
+        circleRenderer.ShowCircle(landingPos, 0.5f); // 0.5m半径的精确落点
+    }
+
+    private void HideLandingIndicator()
+    {
+        if (circleRenderer != null) 
+        {
+            circleRenderer.HideCircle();
         }
     }
 }
