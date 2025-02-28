@@ -10,7 +10,7 @@ public class PlayerPass : MonoBehaviour
     private PlayerManager playerManager;
 
     [Header("Landing Indicator")]
-    public CircleRenderer circleRenderer;    // 替换原来的 landingIndicator 和 currentIndicator
+    public CircleRenderer circleRenderer;    // Replace the original landingIndicator and currentIndicator
 
     [Header("AI Player Control")]
     [SerializeField] private AIPlayerMovement aiPlayer; 
@@ -80,7 +80,7 @@ public class PlayerPass : MonoBehaviour
         canPass = false; // Prevent multiple passes until the ball re-enters the trigger
         playerManager.OnPassCompleted();
 
-        // 添加AI目标更新
+        // Update AI target position
         if(aiPlayer != null)
         {
             aiPlayer.SetTargetPosition(endPoint); 
@@ -109,40 +109,40 @@ public class PlayerPass : MonoBehaviour
     {
         if (circleRenderer == null || ballRb == null) return;
         
-        // 计算球的当前运动轨迹落点
+        // Calculate the landing point of the ball's current trajectory
         Vector3 velocity = ballRb.linearVelocity;
         Vector3 position = ballRb.position;
         
-        // 忽略垂直速度很小的计算
+        // Ignore calculation when vertical velocity is too small
         if (Mathf.Abs(velocity.y) < 0.1f && position.y < 0.5f) 
         {
             HideLandingIndicator();
             return;
         }
 
-        // 使用抛物线运动公式计算落地时间
+        // Calculate landing time using projectile motion formula
         float g = Physics.gravity.magnitude;
         float y0 = position.y;
         float discriminant = velocity.y * velocity.y + 2 * g * y0;
         
         if (discriminant < 0) 
         {
-            // 无实数解时（球不会落地）不显示
+            // Hide when no real solution exists (ball won't land)
             HideLandingIndicator();
             return;
         }
 
         float timeToLand = (velocity.y + Mathf.Sqrt(discriminant)) / g;
         
-        // 计算水平位移
+        // Calculate horizontal displacement
         Vector3 horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
         Vector3 landingPos = position + horizontalVelocity * timeToLand;
         
-        // 确保落点在地面上
+        // Ensure landing point is on the ground
         landingPos.y = 0;
         
-        // 显示指示器
-        circleRenderer.ShowCircle(landingPos, 0.5f); // 0.5m半径的精确落点
+        // Show indicator
+        circleRenderer.ShowCircle(landingPos, 0.5f); // Precise landing point with 0.5m radius
     }
 
     private void HideLandingIndicator()
