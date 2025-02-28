@@ -47,8 +47,8 @@ public class PlayerManager : MonoBehaviour
             MeshRenderer mr = player.GetComponent<MeshRenderer>();
             if (mr != null && mr.materials.Length > 1){
                 Material outlinerMat = mr.materials[1];
-                if (outlinerMat.HasProperty("Scale")){
-                    outlinerMat.SetFloat("Scale", (player == activePlayer) ? 1.08f : 0f);
+                if (outlinerMat.HasProperty("_Scale")){
+                    outlinerMat.SetFloat("_Scale", (player == activePlayer) ? 1.12f : 0f);
                 }
             }
         }
