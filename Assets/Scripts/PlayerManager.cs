@@ -10,7 +10,8 @@ public class PlayerManager : MonoBehaviour
     public List<GameObject> players;
     private int currentPlayerIndex = 0;
 
-    private GameObject activePlayer;
+    private GameObject _activePlayer;
+    public GameObject ActivePlayer => _activePlayer;  // Public getter for activePlayer
 
     void Awake()
     {
@@ -22,6 +23,11 @@ public class PlayerManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    public void ResetActivePlayer()
+    {
+        currentPlayerIndex = 0;
+        SetActivePlayer(players[currentPlayerIndex]);
+    }
 
     public void SetActivePlayer(GameObject curPlayer)
     {
@@ -29,11 +35,11 @@ public class PlayerManager : MonoBehaviour
             Debug.LogError("SetActivePlayer: player is null!");
             return;
         }
-        activePlayer = curPlayer;
-        activePlayer.GetComponent<PlayerMovement>().enabled = true;
-        activePlayer.GetComponent<PlayerPass>().enabled = true;
+        _activePlayer = curPlayer;
+        _activePlayer.GetComponent<PlayerMovement>().enabled = true;
+        _activePlayer.GetComponent<PlayerPass>().enabled = true;
         foreach (GameObject player in players) {
-            if (player!=activePlayer){
+            if (player != _activePlayer){
                 player.GetComponent<PlayerMovement>().enabled = false;
                 player.GetComponent<PlayerPass>().enabled = false;
             }
@@ -48,7 +54,7 @@ public class PlayerManager : MonoBehaviour
             if (mr != null && mr.materials.Length > 1){
                 Material outlinerMat = mr.materials[1];
                 if (outlinerMat.HasProperty("_Scale")){
-                    outlinerMat.SetFloat("_Scale", (player == activePlayer) ? 1.12f : 0f);
+                    outlinerMat.SetFloat("_Scale", (player == _activePlayer) ? 1.12f : 0f);
                 }
             }
         }

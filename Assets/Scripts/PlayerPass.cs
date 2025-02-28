@@ -15,7 +15,8 @@ public class PlayerPass : MonoBehaviour
     [Header("AI Player Control")]
     [SerializeField] private AIPlayerMovement aiPlayer; 
 
-    void Start(){
+    void Start()
+    {
         playerManager = PlayerManager.Instance;
         if (playerManager == null) {
             Debug.LogError("PlayerManager instance not found!");
@@ -76,7 +77,7 @@ public class PlayerPass : MonoBehaviour
         ballRb.linearVelocity = Vector3.zero; // Reset the ball's velocity
         ballRb.angularVelocity = Vector3.zero; // Reset the ball's rotation
         ballRb.AddForce(initialVelocity, ForceMode.VelocityChange);
-        Debug.Log("Passed the ball!");
+        Debug.Log("current player: " + playerManager.ActivePlayer.name + " passed the ball!");
         canPass = false; // Prevent multiple passes until the ball re-enters the trigger
         playerManager.OnPassCompleted();
 

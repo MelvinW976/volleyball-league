@@ -38,5 +38,11 @@ public class BallController : MonoBehaviour
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
+        
+        // 重置当前激活玩家
+        if (PlayerManager.Instance != null)
+        {
+            PlayerManager.Instance.ResetActivePlayer();
+        }
     }
 } 
