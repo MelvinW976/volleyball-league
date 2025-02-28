@@ -18,7 +18,17 @@ public class BallController : MonoBehaviour
     // 使用碰撞检测替代Y轴位置判断
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Ground") && ! collision.gameObject.CompareTag("InnerCourt"))
+        if (collision.gameObject.name == "PlayerCourt")
+        {
+            UIController.Instance?.AddOpponentScore();
+            ResetBall();
+        }
+        else if (collision.gameObject.name == "OpponentCourt")
+        {
+            UIController.Instance?.AddPlayerScore();
+            ResetBall();
+        }
+        else if (collision.gameObject.CompareTag("Ground")) // 通用地面检测
         {
             ResetBall();
         }

@@ -7,6 +7,8 @@ TagManager:
   - Ground
   - Ball
   - InnerCourt
+  - PlayerCourt
+  - OpponentCourt
   layers:
   - Default
   - TransparentFX
