@@ -70,6 +70,10 @@ public class PlayerPass : MonoBehaviour
     {
         Vector3 startPoint = ballRb.position;
         Vector3 endPoint = passTarget.position;
+        
+        // Validate landing position
+        endPoint = AdjustLandingPosition(endPoint);
+
         Vector3 initialVelocity = CalculateVelocity(startPoint, endPoint);
 
         // Apply an upward and forward force to the ball
@@ -85,6 +89,25 @@ public class PlayerPass : MonoBehaviour
         {
             aiPlayer.SetTargetPosition(endPoint); 
         }
+    }
+
+    private Vector3 AdjustLandingPosition(Vector3 originalPos)
+    {
+        // Determine target court based on player team
+        string courtTag = gameObject.CompareTag("MyPlayer") ? "OpponentCourt" : "PlayerCourt";
+        
+        GameObject targetCourt = GameObject.FindGameObjectWithTag(courtTag);
+        if (targetCourt == null) return originalPos;
+
+        Collider courtCollider = targetCourt.GetComponent<Collider>();
+        if (courtCollider == null) return originalPos;
+
+        // Return court center if out of bounds
+        if (!courtCollider.bounds.Contains(originalPos))
+        {
+            return courtCollider.bounds.center;
+        }
+        return originalPos;
     }
 
     private void OnTriggerEnter(Collider other)

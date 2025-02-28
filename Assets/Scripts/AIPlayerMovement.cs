@@ -11,9 +11,10 @@ public class AIPlayerMovement : MonoBehaviour
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        agent.stoppingDistance = 0.5f; // 适当增加停止距离
-        agent.autoBraking = true;      // 启用自动刹车
-        agent.acceleration = 8f;       // 适当降低加速度
+        agent.stoppingDistance = 0.5f; // Stop threshold
+        agent.autoBraking = true;      // Enable auto-brake
+        agent.acceleration = 8f;       // Movement smoothness
+        agent.speed = 5f;
         targetPosition = transform.position; // Initial position
     }
 
@@ -31,7 +32,7 @@ public class AIPlayerMovement : MonoBehaviour
             }
             return;
         }
-        // 如果AI球员在场上，并且球在场上，并且AI球员与球的距离大于1米，则移动AI球员到球的落点
+        // 如果AI球员在场上 并且AI球员与球的距离大于1米，则移动AI球员到球的落点
         else if (agent.isOnNavMesh)
         {
             agent.isStopped = false;

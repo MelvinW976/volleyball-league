@@ -20,11 +20,11 @@ public class BallController : MonoBehaviour
     // 使用碰撞检测替代Y轴位置判断
     private void OnCollisionEnter(Collision collision)
     {
-        // 检测玩家触球
+        // Track last touching team
         if (collision.gameObject.CompareTag("MyPlayer"))
         {
             lastTouchedPlayer = collision.gameObject;
-            lastTouchedTeam = "Player"; // 根据实际队伍标签设置
+            lastTouchedTeam = "Player";
         }
         else if (collision.gameObject.CompareTag("MyOpponent"))
         {
@@ -32,16 +32,14 @@ public class BallController : MonoBehaviour
             lastTouchedTeam = "Opponent";
         }
 
-        // 场地得分逻辑
+        // Court scoring logic
         if (collision.gameObject.CompareTag("PlayerCourt"))
         {
-            Debug.Log("Ball in player court");
             UIController.Instance?.AddOpponentScore();
             ResetBall();
         }
         else if (collision.gameObject.CompareTag("OpponentCourt"))
         {
-            Debug.Log("Ball in opponent court");
             UIController.Instance?.AddPlayerScore();
             ResetBall();
         }
