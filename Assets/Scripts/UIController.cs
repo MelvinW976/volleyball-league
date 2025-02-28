@@ -68,9 +68,9 @@ public class UIController : MonoBehaviour
         // Reset ball and player positions
         BallController ball = FindAnyObjectByType<BallController>();
         if (ball != null) ball.ResetBall();
-
-        // Reset active player
-        PlayerManager.Instance?.ResetActivePlayer();
+        
+        // 重置玩家（通过PlayerManager）
+        PlayerManager.Instance?.ResetAllPlayers();
     }
 
     private Vector3 GetPlayerCourtPosition()

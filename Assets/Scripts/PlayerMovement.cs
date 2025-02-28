@@ -14,9 +14,12 @@ public class PlayerMovement: MonoBehaviour
     private float _currentVelocity;
     [SerializeField] private float speed = 5f;
 
-    void Start()
+    private Vector3 initialPosition;
+
+    void Awake()
     {
         _controller = GetComponent<CharacterController>();
+        initialPosition = transform.position;
         
         _controller.slopeLimit = 45f;  // 最大斜坡角度
         _controller.stepOffset = 0.3f; // 台阶高度
@@ -38,6 +41,25 @@ public class PlayerMovement: MonoBehaviour
             
             Vector3 moveDirection = Vector3.ProjectOnPlane(groundDirection.normalized, Vector3.up);
             _controller.Move(moveDirection * speed * Time.deltaTime);
+        }
+    }
+
+    public void ResetToInitialPosition()
+    {
+        if (_controller == null)
+        {
+            _controller = GetComponent<CharacterController>();
+        }
+
+        if (_controller != null)
+        {
+            _controller.enabled = false;
+            transform.position = initialPosition;
+            _controller.enabled = true;
+        }
+        else
+        {
+            Debug.LogWarning("CharacterController not found on " + gameObject.name);
         }
     }
 }

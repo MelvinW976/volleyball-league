@@ -75,6 +75,23 @@ public class BallController : MonoBehaviour
         }
     }
 
+    // 计算球的落点
+    public Vector3 CalculateLandingPosition()
+    {
+        Vector3 velocity = rb.linearVelocity;
+        Vector3 pos = transform.position;
+        
+        float g = Physics.gravity.magnitude;
+        float y0 = pos.y;
+        float discriminant = velocity.y * velocity.y + 2 * g * y0;
+        
+        if (discriminant < 0) return pos;
+
+        float timeToLand = (velocity.y + Mathf.Sqrt(discriminant)) / g;
+        Vector3 horizontalVel = new Vector3(velocity.x, 0, velocity.z);
+        return pos + horizontalVel * timeToLand;
+    }
+
     // 出界处理逻辑
     private void HandleOutOfBounds()
     {

@@ -80,4 +80,17 @@ public class PlayerManager : MonoBehaviour
         SwitchPlayer();
     }
 
+    public void ResetAllPlayers()
+    {
+        foreach (GameObject player in players)
+        {
+            PlayerMovement movement = player.GetComponent<PlayerMovement>();
+            if (movement != null)
+            {
+                movement.ResetToInitialPosition();
+            }
+        }
+        ResetActivePlayer(); // 保持原有激活玩家重置
+    }
+
 }

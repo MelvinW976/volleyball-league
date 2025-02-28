@@ -4,7 +4,7 @@ public class PlayerPass : MonoBehaviour
 {
     public Rigidbody ballRb;                // Reference to the ball's Rigidbody
     public Transform passTarget;             // The teammate or direction to pass to
-    private readonly float passRadius = 3f;
+    private readonly float passRadius = 5f;
     private readonly float timeToTarget = 2f;
     private bool canPass = false;
     private PlayerManager playerManager;
