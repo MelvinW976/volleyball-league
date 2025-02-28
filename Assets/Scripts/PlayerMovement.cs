@@ -17,18 +17,27 @@ public class PlayerMovement: MonoBehaviour
     void Start()
     {
         _controller = GetComponent<CharacterController>();
+        
+        _controller.slopeLimit = 45f;  // 最大斜坡角度
+        _controller.stepOffset = 0.3f; // 台阶高度
+        _controller.minMoveDistance = 0.001f; // 最小移动距离
     }
 
     void Update()
     {
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
-        _direction = new Vector3(moveHorizontal, 0.0f, moveVertical);
-        if (_direction.sqrMagnitude > 0.0f) {
-            float targetAngle = Mathf.Atan2(_direction.x, _direction.z) * Mathf.Rad2Deg;
+        
+        Vector3 groundDirection = new Vector3(moveHorizontal, 0f, moveVertical);
+        
+        if (groundDirection.sqrMagnitude > 0.0f) 
+        {
+            float targetAngle = Mathf.Atan2(groundDirection.x, groundDirection.z) * Mathf.Rad2Deg;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _currentVelocity, smoothTime);
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
-            _controller.Move(_direction*speed*Time.deltaTime);
+            
+            Vector3 moveDirection = Vector3.ProjectOnPlane(groundDirection.normalized, Vector3.up);
+            _controller.Move(moveDirection * speed * Time.deltaTime);
         }
     }
 }
