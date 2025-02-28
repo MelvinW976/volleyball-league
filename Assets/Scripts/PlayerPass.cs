@@ -12,6 +12,9 @@ public class PlayerPass : MonoBehaviour
     [Header("Landing Indicator")]
     public CircleRenderer circleRenderer;    // 替换原来的 landingIndicator 和 currentIndicator
 
+    [Header("AI Player Control")]
+    [SerializeField] private AIPlayerMovement aiPlayer; 
+
     void Start(){
         playerManager = PlayerManager.Instance;
         if (playerManager == null) {
@@ -63,7 +66,7 @@ public class PlayerPass : MonoBehaviour
         return result;
     }
 
-    private void PerformPass()
+    public void PerformPass()
     {
         Vector3 startPoint = ballRb.position;
         Vector3 endPoint = passTarget.position;
@@ -76,6 +79,12 @@ public class PlayerPass : MonoBehaviour
         Debug.Log("Passed the ball!");
         canPass = false; // Prevent multiple passes until the ball re-enters the trigger
         playerManager.OnPassCompleted();
+
+        // 添加AI目标更新
+        if(aiPlayer != null)
+        {
+            aiPlayer.SetTargetPosition(endPoint); 
+        }
     }
 
     private void OnTriggerEnter(Collider other)
