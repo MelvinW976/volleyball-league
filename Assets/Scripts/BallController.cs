@@ -8,6 +8,8 @@ public class BallController : MonoBehaviour
 
     private Rigidbody rb;
     private Vector3 startPosition;
+    private GameObject lastTouchedPlayer;
+    private string lastTouchedTeam = "";
 
     void Start()
     {
@@ -18,18 +20,35 @@ public class BallController : MonoBehaviour
     // 使用碰撞检测替代Y轴位置判断
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.name == "PlayerCourt")
+        // 检测玩家触球
+        if (collision.gameObject.CompareTag("MyPlayer"))
         {
+            lastTouchedPlayer = collision.gameObject;
+            lastTouchedTeam = "Player"; // 根据实际队伍标签设置
+        }
+        else if (collision.gameObject.CompareTag("MyOpponent"))
+        {
+            lastTouchedPlayer = collision.gameObject;
+            lastTouchedTeam = "Opponent";
+        }
+
+        // 场地得分逻辑
+        if (collision.gameObject.CompareTag("PlayerCourt"))
+        {
+            Debug.Log("Ball in player court");
             UIController.Instance?.AddOpponentScore();
             ResetBall();
         }
-        else if (collision.gameObject.name == "OpponentCourt")
+        else if (collision.gameObject.CompareTag("OpponentCourt"))
         {
+            Debug.Log("Ball in opponent court");
             UIController.Instance?.AddPlayerScore();
             ResetBall();
         }
-        else if (collision.gameObject.CompareTag("Ground")) // 通用地面检测
+        else if (collision.gameObject.CompareTag("Ground"))
         {
+            Debug.Log("Ball out of bounds");
+            HandleOutOfBounds();
             ResetBall();
         }
     }
@@ -54,5 +73,28 @@ public class BallController : MonoBehaviour
         {
             PlayerManager.Instance.ResetActivePlayer();
         }
+    }
+
+    // 出界处理逻辑
+    private void HandleOutOfBounds()
+    {
+        if (string.IsNullOrEmpty(lastTouchedTeam))
+        {
+            Debug.Log("Ball out with no last touch");
+            return;
+        }
+
+        if (lastTouchedTeam == "Player")
+        {
+            UIController.Instance?.AddOpponentScore();
+        }
+        else if (lastTouchedTeam == "Opponent")
+        {
+            UIController.Instance?.AddPlayerScore();
+        }
+
+        // 重置触球记录
+        lastTouchedPlayer = null;
+        lastTouchedTeam = "";
     }
 } 
