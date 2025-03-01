@@ -72,10 +72,4 @@ public class GameplayManager : MonoBehaviour
             isPlayerSide ? bounds.min.z + 1f : bounds.max.z - 1f
         );
     }
-
-    public void OnServeCompleted()
-    {
-        PlayerManager.Instance.EnablePlayerControl(true);
-        PlayerManager.Instance.OnServeCompleted();
-    }
 } 

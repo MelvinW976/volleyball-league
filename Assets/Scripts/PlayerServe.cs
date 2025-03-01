@@ -65,7 +65,8 @@ public class PlayerServe : MonoBehaviour
         Vector3 forceVector = CalculatePassForce(ballSpawnPoint.position, courtTarget);
         ballRb.linearVelocity = forceVector;
         
-        GameplayManager.Instance.OnServeCompleted();
+        PlayerManager.Instance.EnablePlayerControl(true);
+        PlayerManager.Instance.OnServeCompleted();
     }
 
     private Vector3 CalculatePassForce(Vector3 startPos, Vector3 targetPos)
