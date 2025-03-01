@@ -9,6 +9,8 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private GameObject opponentCourt;
 
     public string winningTeam;
+    // 本回合是否发过球
+    public bool served = false;
 
     void Awake()
     {
@@ -32,6 +34,7 @@ public class GameplayManager : MonoBehaviour
         // Reset players
         PlayerManager.Instance?.ResetAllPlayers();
         PlayerManager.Instance?.ResetPossession();
+        served = false;
     }
 
     public Vector3 GetPlayerCourtPosition()

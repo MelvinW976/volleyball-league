@@ -109,11 +109,6 @@ public class PlayerManager : MonoBehaviour
             {
                 movement.ResetToInitialPosition();
             }
-            PlayerServe serve = player.GetComponent<PlayerServe>();
-            if (serve != null)
-            {
-                serve.ResetServe();
-            }
         }
         ResetActivePlayer(); // 保持原有激活玩家重置
     }
@@ -129,6 +124,8 @@ public class PlayerManager : MonoBehaviour
 
     public void OnServeCompleted()
     {
+        GameplayManager.Instance.served = true;
+
         // 设置球权并更新控制
         CurrentPossession = Possession.Opponent;
         UpdateControl();

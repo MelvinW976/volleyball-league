@@ -17,7 +17,6 @@ public class PlayerServe : MonoBehaviour
     private bool inServeZone;
     private float currentServeAngle;
     private bool isHoldingBall = false;
-    private bool canServe = true; // 新增状态标志
 
     void Update()
     {
@@ -48,7 +47,7 @@ public class PlayerServe : MonoBehaviour
         }
 
         // 执行发球
-        if (canServe && Input.GetKeyDown(KeyCode.Space))
+        if (!GameplayManager.Instance.served && Input.GetKeyDown(KeyCode.Space))
         {
             PerformServe();
         }
@@ -68,7 +67,6 @@ public class PlayerServe : MonoBehaviour
 
         PlayerManager.Instance.EnablePlayerControl(true);
         PlayerManager.Instance.OnServeCompleted();
-        canServe = false; // 发球后设置为不可发球
     }
 
     private Vector3 CalculatePassForce(Vector3 startPos, Vector3 targetPos)
@@ -92,7 +90,7 @@ public class PlayerServe : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("ServeArea") && canServe)
+        if (other.CompareTag("ServeArea") && !GameplayManager.Instance.served)
         {
             inServeZone = true;
             Debug.Log("进入发球区");
@@ -131,8 +129,4 @@ public class PlayerServe : MonoBehaviour
         }
     }
 
-    public void ResetServe() // 新增重置发球状态的方法
-    {
-        canServe = true; // 允许再次发球
-    }
 } 
