@@ -8,6 +8,8 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private GameObject playerCourt;
     [SerializeField] private GameObject opponentCourt;
 
+    public string winningTeam;
+
     void Awake()
     {
         if (Instance == null)

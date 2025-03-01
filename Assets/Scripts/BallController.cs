@@ -9,7 +9,7 @@ public class BallController : MonoBehaviour
     private Rigidbody rb;
     private Vector3 startPosition;
     public string lastTouchedTeam = "";
-
+    public GameObject lastTouchedPlayer;
     public static BallController Instance { get; private set; }
 
     void Awake()

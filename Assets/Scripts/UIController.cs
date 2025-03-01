@@ -39,6 +39,7 @@ public class UIController : MonoBehaviour
             playerScoreEffect.transform.position = GameplayManager.Instance.GetOpponentCourtPosition();
             playerScoreEffect.Play();
         }
+        GameplayManager.Instance.winningTeam = "Player";   
         GameplayManager.Instance.ResetGameState();
     }
 
@@ -52,6 +53,7 @@ public class UIController : MonoBehaviour
             opponentScoreEffect.transform.position = GameplayManager.Instance.GetPlayerCourtPosition();
             opponentScoreEffect.Play();
         }
+        GameplayManager.Instance.winningTeam = "Opponent";   
         GameplayManager.Instance.ResetGameState();
     }
 

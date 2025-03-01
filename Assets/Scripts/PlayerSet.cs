@@ -1,12 +1,12 @@
 using UnityEngine;
 
-public class PlayerPass : MonoBehaviour
+public class PlayerSet : MonoBehaviour
 {
     public Rigidbody ballRb;                // Reference to the ball's Rigidbody
-    public Transform passTarget;             // The teammate or direction to pass to
-    private readonly float passRadius = 5f;
+    public Transform setTarget;             // The teammate or direction to set to
+    private readonly float setRadius = 5f;
     private readonly float timeToTarget = 2f;
-    private bool canPass = false;
+    private bool canSet = false;
     private PlayerManager playerManager;
 
     [Header("Landing Indicator")]
@@ -15,7 +15,8 @@ public class PlayerPass : MonoBehaviour
     [Header("AI Player Control")]
     [SerializeField] private AIPlayerMovement aiPlayer; 
 
-    void Start(){
+    void Start()
+    {
         playerManager = PlayerManager.Instance;
         if (playerManager == null) {
             Debug.LogError("PlayerManager instance not found!");
@@ -24,9 +25,9 @@ public class PlayerPass : MonoBehaviour
 
     void Update()
     {
-        // Check for pass input
-        if (canPass && Input.GetKeyDown(KeyCode.K)) {
-            PerformPass();
+        // Check for set input
+        if (canSet && Input.GetKeyDown(KeyCode.K)) {
+            PerformSet();
         }
         if (ballRb != null && ballRb.linearVelocity.sqrMagnitude > 0.1f) 
         {
@@ -40,9 +41,9 @@ public class PlayerPass : MonoBehaviour
 
     Vector3 AddRandomness(Vector3 targetPoint)
     {
-        Vector2 randomPoint = Random.insideUnitCircle * passRadius;
-        Vector3 passPoint = targetPoint + new Vector3(randomPoint.x, randomPoint.y, 0.0f);
-        return passPoint;
+        Vector2 randomPoint = Random.insideUnitCircle * setRadius;
+        Vector3 setPoint = targetPoint + new Vector3(randomPoint.x, randomPoint.y, 0.0f);
+        return setPoint;
     }
 
     Vector3 CalculateVelocity(Vector3 startPoint, Vector3 endPoint)
@@ -58,7 +59,7 @@ public class PlayerPass : MonoBehaviour
         // Calculate initial velocities
         float velocityY = y / timeToTarget + 0.5f * Mathf.Abs(Physics.gravity.y) * timeToTarget;
         float velocityXZ = xz / timeToTarget;
-    
+
         Vector3 result = toTargetXZ.normalized; // Direction
         result *= velocityXZ; // Multiply by velocity
         result.y = velocityY;
@@ -66,10 +67,10 @@ public class PlayerPass : MonoBehaviour
         return result;
     }
 
-    public void PerformPass()
+    public void PerformSet()
     {
         Vector3 startPoint = ballRb.position;
-        Vector3 endPoint = passTarget.position;
+        Vector3 endPoint = setTarget.position;
         
         // Validate landing position
         endPoint = AdjustLandingPosition(endPoint);
@@ -80,11 +81,11 @@ public class PlayerPass : MonoBehaviour
         ballRb.linearVelocity = Vector3.zero; // Reset the ball's velocity
         ballRb.angularVelocity = Vector3.zero; // Reset the ball's rotation
         ballRb.AddForce(initialVelocity, ForceMode.VelocityChange);
-        Debug.Log(playerManager.ActivePlayer.name + " passed the ball!");
-        canPass = false; // Prevent multiple passes until the ball re-enters the trigger
+        Debug.Log(playerManager.ActivePlayer.name + " set the ball!");
+        canSet = false; // Prevent multiple sets until the ball re-enters the trigger
         BallController.Instance.lastTouchedTeam = playerManager.ActivePlayer.CompareTag("MyPlayer") ? "Player" : "Opponent";
         BallController.Instance.lastTouchedPlayer = gameObject;
-        playerManager.OnPassCompleted();
+        playerManager.OnSetCompleted(); // You may want to rename this method as well
 
         // Update AI target position
         if(aiPlayer != null)
@@ -106,16 +107,16 @@ public class PlayerPass : MonoBehaviour
         // Check if the object entering the trigger is the ball
         if (other.gameObject.CompareTag("Ball"))
         {
-            canPass = true;
+            canSet = true;
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        // When the ball exits the trigger, disallow passing
+        // When the ball exits the trigger, disallow setting
         if (other.gameObject.CompareTag("Ball"))
         {
-            canPass = false;
+            canSet = false;
         }
     }
 
@@ -166,4 +167,4 @@ public class PlayerPass : MonoBehaviour
             circleRenderer.HideCircle();
         }
     }
-}
+} 

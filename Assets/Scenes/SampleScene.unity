@@ -6883,13 +6883,13 @@ GameObject:
   - component: {fileID: 837240119}
   - component: {fileID: 837240118}
   - component: {fileID: 837240117}
-  - component: {fileID: 837240116}
   - component: {fileID: 837240115}
   - component: {fileID: 837240114}
   - component: {fileID: 837240113}
   - component: {fileID: 837240112}
   - component: {fileID: 837240120}
   - component: {fileID: 837240121}
+  - component: {fileID: 837240122}
   m_Layer: 6
   m_Name: Volleyball_player1
   m_TagString: MyPlayer
@@ -6981,22 +6981,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &837240116
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 837240111}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d6b8dad5de1948faa02ec7cf5df1a4b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ballRb: {fileID: 1673633811}
-  passTarget: {fileID: 685400033}
-  circleRenderer: {fileID: 1264603726}
-  aiPlayer: {fileID: 685400035}
 --- !u!23 &837240117
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7111,6 +7095,22 @@ MonoBehaviour:
   lateralLimit: 3
   ballSpawnPoint: {fileID: 346202702}
   ballHolder: {fileID: 346202702}
+--- !u!114 &837240122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 837240111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b0a0d09e46ef4eb384c73632ffd65da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ballRb: {fileID: 1673633811}
+  setTarget: {fileID: 685400033}
+  circleRenderer: {fileID: 1264603726}
+  aiPlayer: {fileID: 685400035}
 --- !u!4 &971843013 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: bd81303305d864077a2f7be50f98ef37, type: 3}
@@ -13573,6 +13573,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lastTouchedTeam: 
+  lastTouchedPlayer: {fileID: 0}
 --- !u!1 &1833558801
 GameObject:
   m_ObjectHideFlags: 3

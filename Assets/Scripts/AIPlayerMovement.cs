@@ -40,7 +40,7 @@ public class AIPlayerMovement : MonoBehaviour
         // 如果AI球员在场上 并且AI球员与球的距离大于1米，则移动AI球员到球的落点
         if (Vector3.Distance(ballLandingPos, transform.position) < 1f){
             agent.isStopped = true;
-            if (canPass) TryPassBall();
+            if (canPass) TrySetBall();
         }
         else if (agent.isOnNavMesh)
         {
@@ -77,14 +77,14 @@ public class AIPlayerMovement : MonoBehaviour
     }
 
     // Add pass method
-    private void TryPassBall()
+    private void TrySetBall()
     {
-        // 停止移动并执行传球
-        PlayerPass passComponent = GetComponent<PlayerPass>();
-        if (passComponent != null)
+        // 停止移动并执行垫球
+        PlayerSet setComponent = GetComponent<PlayerSet>();
+        if (setComponent != null)
         {
-            passComponent.PerformPass();
-            canPass = false; // Reset pass state
+            setComponent.PerformSet();
+            canPass = false; // Reset set state
         }
     }
 

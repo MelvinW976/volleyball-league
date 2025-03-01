@@ -44,13 +44,13 @@ public class PlayerManager : MonoBehaviour
         _activePlayer = curPlayer;
         // 只启用己方玩家控制
         _activePlayer.GetComponent<PlayerMovement>().enabled = true;
-        _activePlayer.GetComponent<PlayerPass>().enabled = true;
+        _activePlayer.GetComponent<PlayerSet>().enabled = true;
         
         // 禁用其他玩家控制
         foreach (GameObject player in players.Where(p => p != _activePlayer)) 
         {
             player.GetComponent<PlayerMovement>().enabled = false;
-            player.GetComponent<PlayerPass>().enabled = false;
+            player.GetComponent<PlayerSet>().enabled = false;
         }
         
         HighlightActivePlayer();
@@ -97,7 +97,7 @@ public class PlayerManager : MonoBehaviour
     }
     public void OnPassCompleted()
     {
-        SwitchPossession();
+        SwitchPlayer();
     }
 
     public void ResetAllPlayers()
@@ -109,6 +109,11 @@ public class PlayerManager : MonoBehaviour
             {
                 movement.ResetToInitialPosition();
             }
+            PlayerServe serve = player.GetComponent<PlayerServe>();
+            if (serve != null)
+            {
+                serve.ResetServe();
+            }
         }
         ResetActivePlayer(); // 保持原有激活玩家重置
     }
@@ -118,7 +123,7 @@ public class PlayerManager : MonoBehaviour
         foreach (GameObject player in players)
         {
             player.GetComponent<PlayerMovement>().enabled = enable;
-            player.GetComponent<PlayerPass>().enabled = enable;
+            player.GetComponent<PlayerSet>().enabled = enable;
         }
     }
 
@@ -138,13 +143,6 @@ public class PlayerManager : MonoBehaviour
         SwitchPlayer();
     }
 
-    // 当球被触碰时调用（在BallController中）
-    public void OnBallTouched(string team)
-    {
-        CurrentPossession = team == "Player" ? Possession.Opponent : Possession.Player;
-        UpdateControl();
-    }
-
     private void UpdateControl()
     {
         bool playerControl = CurrentPossession == Possession.Player;
@@ -154,7 +152,7 @@ public class PlayerManager : MonoBehaviour
         foreach (GameObject player in players.Where(p => p.CompareTag("MyPlayer"))) 
         {
             // player.GetComponent<PlayerMovement>().enabled = playerControl;
-            player.GetComponent<PlayerPass>().enabled = playerControl;
+            player.GetComponent<PlayerSet>().enabled = playerControl;
         }
 
         // 控制AI
@@ -169,5 +167,10 @@ public class PlayerManager : MonoBehaviour
     {
         CurrentPossession = Possession.Neutral;
         UpdateControl();
+    }
+
+    public void OnSetCompleted()
+    {
+        SwitchPossession();
     }
 }
