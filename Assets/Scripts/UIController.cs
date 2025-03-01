@@ -34,13 +34,12 @@ public class UIController : MonoBehaviour
         playerScore++;
         UpdateScoreDisplay();
         
-        // 在对方场地播放特效
         if(playerScoreEffect != null)
         {
-            playerScoreEffect.transform.position = GetOpponentCourtPosition();
+            playerScoreEffect.transform.position = GameplayManager.Instance.GetOpponentCourtPosition();
             playerScoreEffect.Play();
         }
-        ResetGameState();
+        GameplayManager.Instance.ResetGameState();
     }
 
     public void AddOpponentScore()
@@ -48,38 +47,17 @@ public class UIController : MonoBehaviour
         opponentScore++;
         UpdateScoreDisplay();
         
-        // 在我方场地播放特效
         if(opponentScoreEffect != null) 
         {
-            opponentScoreEffect.transform.position = GetPlayerCourtPosition();
+            opponentScoreEffect.transform.position = GameplayManager.Instance.GetPlayerCourtPosition();
             opponentScoreEffect.Play();
         }
-        ResetGameState();
+        GameplayManager.Instance.ResetGameState();
     }
 
     private void UpdateScoreDisplay()
     {
         playerScoreText.text = playerScore.ToString();
         opponentScoreText.text = opponentScore.ToString();
-    }
-
-    private void ResetGameState()
-    {
-        // Reset ball and player positions
-        BallController ball = FindAnyObjectByType<BallController>();
-        if (ball != null) ball.ResetBall();
-        
-        // 重置玩家（通过PlayerManager）
-        PlayerManager.Instance?.ResetAllPlayers();
-    }
-
-    private Vector3 GetPlayerCourtPosition()
-    {
-        return GameObject.FindGameObjectWithTag("PlayerCourt").transform.position + Vector3.up * 2f;
-    }
-
-    private Vector3 GetOpponentCourtPosition()
-    {
-        return GameObject.FindGameObjectWithTag("OpponentCourt").transform.position + Vector3.up * 2f;
     }
 } 

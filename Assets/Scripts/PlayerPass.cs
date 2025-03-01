@@ -93,21 +93,10 @@ public class PlayerPass : MonoBehaviour
 
     private Vector3 AdjustLandingPosition(Vector3 originalPos)
     {
-        // Determine target court based on player team
-        string courtTag = gameObject.CompareTag("MyPlayer") ? "OpponentCourt" : "PlayerCourt";
-        
-        GameObject targetCourt = GameObject.FindGameObjectWithTag(courtTag);
-        if (targetCourt == null) return originalPos;
-
-        Collider courtCollider = targetCourt.GetComponent<Collider>();
-        if (courtCollider == null) return originalPos;
-
-        // Return court center if out of bounds
-        if (!courtCollider.bounds.Contains(originalPos))
-        {
-            return courtCollider.bounds.center;
-        }
-        return originalPos;
+        bool isPlayer = gameObject.CompareTag("MyPlayer");
+        return GameplayManager.Instance.IsPositionInCourt(originalPos, !isPlayer) ? 
+               originalPos : 
+               GameplayManager.Instance.GetCourtCenter(!isPlayer);
     }
 
     private void OnTriggerEnter(Collider other)
