@@ -7,9 +7,11 @@ public class AIPlayerMovement : MonoBehaviour
     private Vector3 targetPosition;
     [SerializeField] private float passBallRadius = 2f;
     private bool canPass = false;
+    public bool canMove = false;
 
     void Start()
     {
+        canMove = false;
         agent = GetComponent<NavMeshAgent>();
         agent.stoppingDistance = 0.5f; // Stop threshold
         agent.autoBraking = true;      // Enable auto-brake
@@ -20,7 +22,8 @@ public class AIPlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // if (PlayerManager.Instance.ActivePlayer != gameObject) return;
+        Debug.Log("canMove: " + canMove);
+        if (!canMove) return;
 
         // 获取球的预测落点
         Vector3 ballLandingPos = GetBallLandingPosition();

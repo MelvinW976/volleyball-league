@@ -20,7 +20,7 @@ public class GameplayManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
+    
     public void ResetGameState()
     {
         // Reset ball
@@ -29,6 +29,7 @@ public class GameplayManager : MonoBehaviour
 
         // Reset players
         PlayerManager.Instance?.ResetAllPlayers();
+        PlayerManager.Instance?.ResetPossession();
     }
 
     public Vector3 GetPlayerCourtPosition()

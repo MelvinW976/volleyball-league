@@ -1268,8 +1268,8 @@ Transform:
   m_GameObject: {fileID: 513705678}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -15.401509, y: 1.5, z: -20.7}
-  m_LocalScale: {x: 2, y: 1.245, z: 0.124094}
+  m_LocalPosition: {x: -15.401509, y: 1.5, z: -24.93}
+  m_LocalScale: {x: 2, y: 1.245, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1593630216}
@@ -1496,11 +1496,11 @@ GameObject:
   - component: {fileID: 685400030}
   - component: {fileID: 685400029}
   - component: {fileID: 685400028}
-  - component: {fileID: 685400027}
   - component: {fileID: 685400026}
   - component: {fileID: 685400034}
   - component: {fileID: 685400036}
   - component: {fileID: 685400035}
+  - component: {fileID: 685400037}
   m_Layer: 6
   m_Name: Volleyball_player2
   m_TagString: MyOpponent
@@ -1535,19 +1535,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
---- !u!114 &685400027
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 685400025}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78b17e2aebd67451ebdec10440555d24, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 5
 --- !u!135 &685400028
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1716,6 +1703,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   passBallRadius: 2
+  canMove: 1
 --- !u!195 &685400036
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1738,6 +1726,19 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &685400037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 685400025}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78b17e2aebd67451ebdec10440555d24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 5
 --- !u!1 &707449243
 GameObject:
   m_ObjectHideFlags: 0
@@ -7108,7 +7109,7 @@ MonoBehaviour:
   minServeAngle: 15
   maxServeAngle: 45
   lateralLimit: 3
-  ballSpawnPoint: {fileID: 0}
+  ballSpawnPoint: {fileID: 346202702}
   ballHolder: {fileID: 346202702}
 --- !u!4 &971843013 stripped
 Transform:
@@ -7180,7 +7181,7 @@ Transform:
   m_GameObject: {fileID: 978524844}
   serializedVersion: 2
   m_LocalRotation: {x: 0.0985376, y: -0.000000042146848, z: -3.5046844e-15, w: 0.99513334}
-  m_LocalPosition: {x: 0.78026116, y: 7.124236, z: -29.363754}
+  m_LocalPosition: {x: -1.9384612, y: 7.3179355, z: -38.805016}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -13571,6 +13572,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dca0b8b1b54c471cb23fce5ba98aef8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lastTouchedTeam: 
 --- !u!1 &1833558801
 GameObject:
   m_ObjectHideFlags: 3

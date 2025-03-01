@@ -80,8 +80,9 @@ public class PlayerPass : MonoBehaviour
         ballRb.linearVelocity = Vector3.zero; // Reset the ball's velocity
         ballRb.angularVelocity = Vector3.zero; // Reset the ball's rotation
         ballRb.AddForce(initialVelocity, ForceMode.VelocityChange);
-        Debug.Log("current player: " + playerManager.ActivePlayer.name + " passed the ball!");
+        Debug.Log(playerManager.ActivePlayer.name + " passed the ball!");
         canPass = false; // Prevent multiple passes until the ball re-enters the trigger
+        BallController.Instance.lastTouchedTeam = playerManager.ActivePlayer.CompareTag("MyPlayer") ? "Player" : "Opponent";
         playerManager.OnPassCompleted();
 
         // Update AI target position

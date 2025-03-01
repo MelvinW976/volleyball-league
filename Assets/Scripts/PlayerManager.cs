@@ -14,6 +14,9 @@ public class PlayerManager : MonoBehaviour
     private GameObject _activePlayer;
     public GameObject ActivePlayer => _activePlayer;  // Public getter for activePlayer
 
+    public enum Possession { Neutral, Player, Opponent }
+    public Possession CurrentPossession { get; private set; } = Possession.Neutral;
+
     void Awake()
     {
         if (Instance == null) {
@@ -72,6 +75,7 @@ public class PlayerManager : MonoBehaviour
     }
 
     void Update() {
+        Debug.Log($"Current Possession: {CurrentPossession}");
         if (Input.GetKeyDown(KeyCode.Tab)) {
             SwitchPlayer();
         }
@@ -86,9 +90,14 @@ public class PlayerManager : MonoBehaviour
         currentPlayerIndex = (currentPlayerIndex + 1) % teamPlayers.Count;
         SetActivePlayer(teamPlayers[currentPlayerIndex]);
     }
+    private void SwitchPossession()
+    {
+        CurrentPossession = CurrentPossession == Possession.Player ? Possession.Opponent : Possession.Player;
+        UpdateControl();
+    }
     public void OnPassCompleted()
     {
-        SwitchPlayer();
+        SwitchPossession();
     }
 
     public void ResetAllPlayers()
@@ -115,7 +124,11 @@ public class PlayerManager : MonoBehaviour
 
     public void OnServeCompleted()
     {
-        // 延迟一帧切换，确保物理计算完成
+        // 设置球权并更新控制
+        CurrentPossession = Possession.Opponent;
+        UpdateControl();
+        
+        // 延迟切换玩家
         StartCoroutine(SwitchPlayerNextFrame());
     }
 
@@ -125,4 +138,36 @@ public class PlayerManager : MonoBehaviour
         SwitchPlayer();
     }
 
+    // 当球被触碰时调用（在BallController中）
+    public void OnBallTouched(string team)
+    {
+        CurrentPossession = team == "Player" ? Possession.Opponent : Possession.Player;
+        UpdateControl();
+    }
+
+    private void UpdateControl()
+    {
+        bool playerControl = CurrentPossession == Possession.Player;
+        bool opponentControl = CurrentPossession == Possession.Opponent;
+
+        // 控制玩家
+        foreach (GameObject player in players.Where(p => p.CompareTag("MyPlayer"))) 
+        {
+            // player.GetComponent<PlayerMovement>().enabled = playerControl;
+            player.GetComponent<PlayerPass>().enabled = playerControl;
+        }
+
+        // 控制AI
+        foreach (GameObject opponent in players.Where(p => p.CompareTag("MyOpponent"))) 
+        {
+            opponent.GetComponent<AIPlayerMovement>().canMove = opponentControl;
+        }
+    }
+
+    // 在得分后重置球权
+    public void ResetPossession()
+    {
+        CurrentPossession = Possession.Neutral;
+        UpdateControl();
+    }
 }

@@ -8,8 +8,7 @@ public class BallController : MonoBehaviour
 
     private Rigidbody rb;
     private Vector3 startPosition;
-    private GameObject lastTouchedPlayer;
-    private string lastTouchedTeam = "";
+    public string lastTouchedTeam = "";
 
     public static BallController Instance { get; private set; }
 
@@ -26,18 +25,6 @@ public class BallController : MonoBehaviour
     // 使用碰撞检测替代Y轴位置判断
     private void OnCollisionEnter(Collision collision)
     {
-        // Track last touching team
-        if (collision.gameObject.CompareTag("MyPlayer"))
-        {
-            lastTouchedPlayer = collision.gameObject;
-            lastTouchedTeam = "Player";
-        }
-        else if (collision.gameObject.CompareTag("MyOpponent"))
-        {
-            lastTouchedPlayer = collision.gameObject;
-            lastTouchedTeam = "Opponent";
-        }
-
         // Court scoring logic
         if (collision.gameObject.CompareTag("PlayerCourt"))
         {
@@ -109,7 +96,6 @@ public class BallController : MonoBehaviour
         }
 
         // 重置触球记录
-        lastTouchedPlayer = null;
         lastTouchedTeam = "";
     }
 } 
