@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -31,19 +32,24 @@ public class PlayerManager : MonoBehaviour
 
     public void SetActivePlayer(GameObject curPlayer)
     {
-        if (curPlayer == null){
-            Debug.LogError("SetActivePlayer: player is null!");
+        if (curPlayer == null || !curPlayer.CompareTag("MyPlayer")) 
+        {
+            Debug.LogError("SetActivePlayer: Invalid player selection!");
             return;
         }
+        
         _activePlayer = curPlayer;
+        // 只启用己方玩家控制
         _activePlayer.GetComponent<PlayerMovement>().enabled = true;
         _activePlayer.GetComponent<PlayerPass>().enabled = true;
-        foreach (GameObject player in players) {
-            if (player != _activePlayer){
-                player.GetComponent<PlayerMovement>().enabled = false;
-                player.GetComponent<PlayerPass>().enabled = false;
-            }
+        
+        // 禁用其他玩家控制
+        foreach (GameObject player in players.Where(p => p != _activePlayer)) 
+        {
+            player.GetComponent<PlayerMovement>().enabled = false;
+            player.GetComponent<PlayerPass>().enabled = false;
         }
+        
         HighlightActivePlayer();
     }
 
@@ -71,9 +77,14 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    private void SwitchPlayer() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.Count;
-        SetActivePlayer(players[currentPlayerIndex]);
+    private void SwitchPlayer()
+    {
+        // 只在自己队伍玩家中切换
+        var teamPlayers = players.Where(p => p.CompareTag("MyPlayer")).ToList();
+        if (teamPlayers.Count == 0) return;
+        
+        currentPlayerIndex = (currentPlayerIndex + 1) % teamPlayers.Count;
+        SetActivePlayer(teamPlayers[currentPlayerIndex]);
     }
     public void OnPassCompleted()
     {

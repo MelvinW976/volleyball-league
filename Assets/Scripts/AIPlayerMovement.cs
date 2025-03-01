@@ -20,19 +20,25 @@ public class AIPlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (PlayerManager.Instance.ActivePlayer != gameObject) return;
+        // if (PlayerManager.Instance.ActivePlayer != gameObject) return;
 
-        // 持续获取球的预测落点
+        // 获取球的预测落点
         Vector3 ballLandingPos = GetBallLandingPosition();
-        if (Vector3.Distance(ballLandingPos, transform.position) < 1f){
-            agent.isStopped = true; // 完全停止
-            if (canPass)
-            {
-                TryPassBall();
-            }
-            return;
-        }
+        
+        // 检查落点是否在对方场地（XZ平面）
+        // bool isLandingInOpponentCourt = GameplayManager.Instance.IsPositionInCourt(ballLandingPos, false);
+        // if (!isLandingInOpponentCourt) 
+        // {
+        //     Debug.Log("落点不在对手场地");
+        //     agent.isStopped = true;
+        //     return;
+        // }
+
         // 如果AI球员在场上 并且AI球员与球的距离大于1米，则移动AI球员到球的落点
+        if (Vector3.Distance(ballLandingPos, transform.position) < 1f){
+            agent.isStopped = true;
+            if (canPass) TryPassBall();
+        }
         else if (agent.isOnNavMesh)
         {
             agent.isStopped = false;

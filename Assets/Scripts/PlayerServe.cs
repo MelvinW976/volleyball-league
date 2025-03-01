@@ -64,7 +64,7 @@ public class PlayerServe : MonoBehaviour
         // 使用传球算法
         Vector3 forceVector = CalculatePassForce(ballSpawnPoint.position, courtTarget);
         ballRb.linearVelocity = forceVector;
-        
+
         PlayerManager.Instance.EnablePlayerControl(true);
         PlayerManager.Instance.OnServeCompleted();
     }
@@ -103,7 +103,6 @@ public class PlayerServe : MonoBehaviour
             // 重置球的位置到玩家头顶
             ballRb.transform.position = ballHolder.position;
             ballRb.linearVelocity = Vector3.zero;
-            ballRb.angularVelocity = Vector3.zero;
             ballRb.isKinematic = true; // 新增关键设置
             
             StartCoroutine(SetupServeBall());
