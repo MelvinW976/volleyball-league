@@ -10,6 +10,7 @@ TagManager:
   - OpponentCourt
   - MyPlayer
   - MyOpponent
+  - ServeArea
   layers:
   - Default
   - TransparentFX

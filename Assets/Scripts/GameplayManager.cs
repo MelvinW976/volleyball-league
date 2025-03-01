@@ -61,4 +61,23 @@ public class GameplayManager : MonoBehaviour
 
         return courtCollider.bounds.center;
     }
+
+    public Vector3 GetRandomPositionInOpponentCourt(bool isPlayerSide)
+    {
+        GameObject targetCourt = isPlayerSide ? opponentCourt : playerCourt;
+        Collider courtCollider = targetCourt.GetComponent<Collider>();
+        Bounds bounds = courtCollider.bounds;
+
+        return new Vector3(
+            Random.Range(bounds.min.x + 2f, bounds.max.x - 2f),
+            bounds.max.y,
+            isPlayerSide ? bounds.min.z + 1f : bounds.max.z - 1f
+        );
+    }
+
+    public void OnServeCompleted()
+    {
+        // 触发得分重置等逻辑
+        PlayerManager.Instance.EnablePlayerControl(true);
+    }
 } 

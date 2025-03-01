@@ -93,4 +93,13 @@ public class PlayerManager : MonoBehaviour
         ResetActivePlayer(); // 保持原有激活玩家重置
     }
 
+    public void EnablePlayerControl(bool enable)
+    {
+        foreach (GameObject player in players)
+        {
+            player.GetComponent<PlayerMovement>().enabled = enable;
+            player.GetComponent<PlayerPass>().enabled = enable;
+        }
+    }
+
 }
