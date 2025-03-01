@@ -57,9 +57,7 @@ public class GameplayManager : MonoBehaviour
         if (targetCourt == null) return Vector3.zero;
 
         Collider courtCollider = targetCourt.GetComponent<Collider>();
-        if (courtCollider == null) return Vector3.zero;
-
-        return courtCollider.bounds.center;
+        return courtCollider != null ? courtCollider.bounds.center : Vector3.zero;
     }
 
     public Vector3 GetRandomPositionInOpponentCourt(bool isPlayerSide)

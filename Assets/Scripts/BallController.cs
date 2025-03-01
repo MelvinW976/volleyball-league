@@ -11,8 +11,14 @@ public class BallController : MonoBehaviour
     private GameObject lastTouchedPlayer;
     private string lastTouchedTeam = "";
 
-    void Start()
+    public static BallController Instance { get; private set; }
+
+    void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
         rb = GetComponent<Rigidbody>();
         startPosition = transform.position;
     }
