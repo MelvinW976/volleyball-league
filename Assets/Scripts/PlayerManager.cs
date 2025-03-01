@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using UnityEditor.Rendering.Universal;
 using UnityEngine;
+using System.Collections;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -23,7 +23,7 @@ public class PlayerManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    public void ResetActivePlayer()
+    private void ResetActivePlayer()
     {
         currentPlayerIndex = 0;
         SetActivePlayer(players[currentPlayerIndex]);
@@ -100,6 +100,18 @@ public class PlayerManager : MonoBehaviour
             player.GetComponent<PlayerMovement>().enabled = enable;
             player.GetComponent<PlayerPass>().enabled = enable;
         }
+    }
+
+    public void OnServeCompleted()
+    {
+        // 延迟一帧切换，确保物理计算完成
+        StartCoroutine(SwitchPlayerNextFrame());
+    }
+
+    private IEnumerator SwitchPlayerNextFrame()
+    {
+        yield return null;
+        SwitchPlayer();
     }
 
 }

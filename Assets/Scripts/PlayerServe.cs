@@ -93,6 +93,8 @@ public class PlayerServe : MonoBehaviour
         {
             inServeZone = true;
             Debug.Log("进入发球区");
+            // 禁用玩家自由移动
+            PlayerManager.Instance.EnablePlayerControl(false);
 
             // 通过单例获取球实例
             ballRb = BallController.Instance.GetComponent<Rigidbody>();
@@ -100,6 +102,10 @@ public class PlayerServe : MonoBehaviour
             // 重置球的位置到玩家头顶
             ballRb.transform.position = ballHolder.position;
             ballRb.linearVelocity = Vector3.zero;
+            ballRb.angularVelocity = Vector3.zero;
+            ballRb.isKinematic = true; // 新增关键设置
+            
+            StartCoroutine(SetupServeBall());
         }
     }
 

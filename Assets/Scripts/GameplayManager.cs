@@ -75,7 +75,7 @@ public class GameplayManager : MonoBehaviour
 
     public void OnServeCompleted()
     {
-        // 触发得分重置等逻辑
         PlayerManager.Instance.EnablePlayerControl(true);
+        PlayerManager.Instance.OnServeCompleted();
     }
 } 
