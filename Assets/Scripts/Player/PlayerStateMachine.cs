@@ -1,18 +1,20 @@
 using UnityEngine;
-
-public abstract class PlayerState
-{
-    public virtual void Enter(PlayerController player) {}
-    public virtual void Update(PlayerController player) {}
-    public virtual void Exit(PlayerController player) {}
-}
+using PlayerStates;
 
 public class PlayerStateMachine : MonoBehaviour
 {
     private PlayerController player;
     private PlayerState currentState;
 
+    public PlayerState CurrentState => currentState;
+
     void Awake() => player = GetComponent<PlayerController>();
+
+    void Start()
+    {
+        // 初始化默认状态
+        ChangeState(new IdleState());
+    }
 
     void Update() => currentState?.Update(player);
 

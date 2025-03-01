@@ -464,6 +464,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCourt: {fileID: 1864187436}
   opponentCourt: {fileID: 819608661}
+  winningTeam: 
+  served: 0
 --- !u!4 &204599841
 Transform:
   m_ObjectHideFlags: 0
@@ -1501,6 +1503,7 @@ GameObject:
   - component: {fileID: 685400036}
   - component: {fileID: 685400035}
   - component: {fileID: 685400037}
+  - component: {fileID: 685400038}
   m_Layer: 6
   m_Name: Volleyball_player2
   m_TagString: MyOpponent
@@ -1586,7 +1589,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 685400025}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2d6b8dad5de1948faa02ec7cf5df1a4b, type: 3}
   m_Name: 
@@ -1739,6 +1742,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
+--- !u!114 &685400038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 685400025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b0a0d09e46ef4eb384c73632ffd65da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ballRb: {fileID: 1673633811}
+  setTarget: {fileID: 837240119}
+  circleRenderer: {fileID: 1264603726}
+  aiPlayer: {fileID: 0}
 --- !u!1 &707449243
 GameObject:
   m_ObjectHideFlags: 0

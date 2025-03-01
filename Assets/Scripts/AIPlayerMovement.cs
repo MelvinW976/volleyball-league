@@ -22,7 +22,6 @@ public class AIPlayerMovement : MonoBehaviour
 
     void Update()
     {
-        Debug.Log("canMove: " + canMove);
         if (!canMove) return;
 
         // 获取球的预测落点

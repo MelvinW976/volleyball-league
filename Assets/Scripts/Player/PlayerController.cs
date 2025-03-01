@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
+        // 自动获取已附加的状态机组件
         StateMachine = GetComponent<PlayerStateMachine>();
         Rb = GetComponent<Rigidbody>();
     }
@@ -24,6 +25,6 @@ public class PlayerController : MonoBehaviour
     // 判断是否为队友
     public bool IsTeammate(PlayerController otherPlayer)
     {
-        return otherPlayer != this && CompareTag(otherPlayer.tag); // Use CompareTag for efficiency
+        return otherPlayer != this && CompareTag(otherPlayer.tag);
     }
 } 

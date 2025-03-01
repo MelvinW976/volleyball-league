@@ -29,11 +29,11 @@ public class GameplayManager : MonoBehaviour
     {
         // Reset ball
         BallController ball = FindAnyObjectByType<BallController>();
+        PlayerManager.Instance?.ResetPossession();
         if (ball != null) ball.ResetBall();
 
         // Reset players
         PlayerManager.Instance?.ResetAllPlayers();
-        PlayerManager.Instance?.ResetPossession();
         served = false;
     }
 

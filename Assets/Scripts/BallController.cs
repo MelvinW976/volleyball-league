@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using System.Collections;
 
 public class BallController : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class BallController : MonoBehaviour
     public string lastTouchedTeam = "";
     public GameObject lastTouchedPlayer;
     public static BallController Instance { get; private set; }
+    private bool isResetting; // 新增重置状态标志
 
     void Awake()
     {
@@ -36,12 +38,29 @@ public class BallController : MonoBehaviour
             UIController.Instance?.AddPlayerScore();
             ResetBall();
         }
-        else if (collision.gameObject.CompareTag("Ground"))
+        else if (collision.gameObject.CompareTag("Ground") && !isResetting)
         {
-            Debug.Log("Ball out of bounds");
-            HandleOutOfBounds();
-            ResetBall();
+            Debug.Log("球已落地，3秒后重置");
+            isResetting = true;
+            StartCoroutine(DelayedReset());
         }
+    }
+
+    private IEnumerator DelayedReset()
+    {
+        // 禁用球物理
+        rb.isKinematic = true;
+        
+        // 等待3秒
+        yield return new WaitForSeconds(3f);
+        
+        // 执行重置
+        ResetBall();
+        GameplayManager.Instance.ResetGameState();
+        
+        // 恢复物理
+        rb.isKinematic = false;
+        isResetting = false;
     }
 
     public void ResetBall()
