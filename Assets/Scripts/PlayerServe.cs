@@ -60,7 +60,6 @@ public class PlayerServe : MonoBehaviour
 
     private void TryPerformServe()
     {
-        Debug.Log("CanServe = " + CanServe());
         if (Input.GetKeyDown(KeyCode.Space) && CanServe())
         {
             PerformServe();

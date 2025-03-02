@@ -1743,7 +1743,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78b17e2aebd67451ebdec10440555d24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
 --- !u!114 &685400038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1760,6 +1759,7 @@ MonoBehaviour:
   setTarget: {fileID: 837240119}
   circleRenderer: {fileID: 1264603726}
   aiPlayer: {fileID: 0}
+  passBallRadius: 2
 --- !u!114 &685400039
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1786,7 +1786,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StateMachine: {fileID: 0}
   Rb: {fileID: 0}
-  MoveSpeed: 5
+  MoveSpeed: 8
   PassForce: 8
 --- !u!1 &707449243
 GameObject:
@@ -6988,7 +6988,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78b17e2aebd67451ebdec10440555d24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
 --- !u!135 &837240114
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -7163,6 +7162,7 @@ MonoBehaviour:
   setTarget: {fileID: 685400033}
   circleRenderer: {fileID: 1264603726}
   aiPlayer: {fileID: 685400035}
+  passBallRadius: 2
 --- !u!114 &837240123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7177,7 +7177,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StateMachine: {fileID: 0}
   Rb: {fileID: 0}
-  MoveSpeed: 5
+  MoveSpeed: 10
   PassForce: 8
 --- !u!114 &837240124
 MonoBehaviour:

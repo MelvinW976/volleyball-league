@@ -12,7 +12,7 @@ public class PlayerMovement: MonoBehaviour
     private Vector3 _direction;
     private float smoothTime = 0.05f;
     private float _currentVelocity;
-    [SerializeField] private float speed = 5f;
+    private float speed = 5f;
 
     private Vector3 initialPosition;
 

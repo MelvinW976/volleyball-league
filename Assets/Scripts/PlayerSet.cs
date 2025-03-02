@@ -8,12 +8,17 @@ public class PlayerSet : MonoBehaviour
     private readonly float timeToTarget = 2f;
     private bool canSet = false;
     private PlayerManager playerManager;
+    private BallController currentBall;
 
     [Header("Landing Indicator")]
     public CircleRenderer circleRenderer;    // Replace the original landingIndicator and currentIndicator
-
+    
     [Header("AI Player Control")]
     [SerializeField] private AIPlayerMovement aiPlayer; 
+    [SerializeField] private float passBallRadius = 2f;
+
+    // Add this property to track setting completion
+    public bool IsSettingComplete { get; private set; } = false;
 
     void Start()
     {
@@ -86,6 +91,8 @@ public class PlayerSet : MonoBehaviour
         BallController.Instance.lastTouchedTeam = playerManager.ActivePlayer.CompareTag("MyPlayer") ? "Player" : "Opponent";
         BallController.Instance.lastTouchedPlayer = gameObject;
         playerManager.OnSetCompleted(); // You may want to rename this method as well
+        // Set the completion flag to true when setting is done
+        IsSettingComplete = true;
 
         // Update AI target position
         if(aiPlayer != null)
@@ -166,5 +173,17 @@ public class PlayerSet : MonoBehaviour
         {
             circleRenderer.HideCircle();
         }
+    }
+
+    public bool InSetRange()
+    {
+        if (currentBall == null) return false;
+        return Vector3.Distance(transform.position, currentBall.transform.position) < passBallRadius;
+    }
+
+    // Add a method to reset the flag when needed
+    public void ResetSetState()
+    {
+        IsSettingComplete = false;
     }
 } 

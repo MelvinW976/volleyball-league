@@ -78,18 +78,4 @@ public class GameplayManager : MonoBehaviour
             isPlayerSide ? bounds.min.z + 1f : bounds.max.z - 1f
         );
     }
-
-    // // 在发球完成后触发
-    // public void OnServeCompleted()
-    // {
-    //     served = true;
-    //     PlayerManager.Instance.SwitchAllToReceiveState(); // 新增方法
-    // }
-
-    // // 在BallController的ResetBall中添加
-    // public void ResetBall()
-    // {
-    //     // ...其他逻辑
-    //     PlayerManager.Instance.SwitchAllToIdleState();
-    // }
 } 

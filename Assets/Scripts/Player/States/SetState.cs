@@ -12,8 +12,12 @@ namespace PlayerStates
 
         public override void Update(PlayerController player)
         {
-            // Logic for updating the set state
-            // You can add any specific behavior for setting here
+            // 直接调用现有Set组件
+            if (player.GetComponent<PlayerSet>().IsSettingComplete)
+            {
+                // 直接返回接发球状态
+                player.StateMachine.ChangeState(new ReceiveState());
+            }
         }
 
         public override void Exit(PlayerController player)

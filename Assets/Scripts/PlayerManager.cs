@@ -76,7 +76,6 @@ public class PlayerManager : MonoBehaviour
     }
 
     void Update() {
-        Debug.Log($"Current Possession: {CurrentPossession}");
         if (Input.GetKeyDown(KeyCode.Tab)) {
             SwitchPlayer();
         }
@@ -133,7 +132,7 @@ public class PlayerManager : MonoBehaviour
         // 设置球权并更新控制
         CurrentPossession = Possession.Opponent;
         UpdateControl();
-        
+        PlayerManager.Instance.SwitchAllToReceiveState(false);
         // 延迟切换玩家
         StartCoroutine(SwitchPlayerNextFrame());
     }
@@ -173,7 +172,9 @@ public class PlayerManager : MonoBehaviour
     public void OnSetCompleted()
     {
         SwitchPossession();
+        SwitchAllToReceiveState(false); // 不重置位置
     }
+
     public void StopAllAIPlayers()
     {
         foreach (var player in players)
@@ -183,5 +184,24 @@ public class PlayerManager : MonoBehaviour
                 ai.EmergencyStop(); // 新增紧急停止方法
             }
         }
+    }
+
+    public void SwitchAllToReceiveState(bool resetPosition = true)
+    {
+        foreach (var player in players)
+        {
+            // 添加安全校验
+            if (player == null || player.GetComponent<PlayerController>() == null) continue;
+            
+            // 添加位置重置
+            if (resetPosition) 
+            {
+                player.GetComponent<PlayerMovement>().ResetToInitialPosition();
+            }
+            
+            // 所有玩家状态转换
+            player.GetComponent<PlayerController>().StateMachine.ChangeState(new PlayerStates.ReceiveState());
+        }
+        Debug.Log($"已切换{players.Count}名玩家到接发球状态");
     }
 }
