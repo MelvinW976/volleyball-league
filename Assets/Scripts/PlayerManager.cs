@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 using System.Linq;
+using UnityEngine.Animations;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -109,6 +110,9 @@ public class PlayerManager : MonoBehaviour
             {
                 movement.ResetToInitialPosition();
             }
+            if (player.GetComponent<AIPlayerMovement>() != null){
+                player.GetComponent<AIPlayerMovement>().ResetAI();
+            }
         }
         ResetActivePlayer(); // 保持原有激活玩家重置
     }
@@ -169,5 +173,15 @@ public class PlayerManager : MonoBehaviour
     public void OnSetCompleted()
     {
         SwitchPossession();
+    }
+    public void StopAllAIPlayers()
+    {
+        foreach (var player in players)
+        {
+            AIPlayerMovement ai = player.GetComponent<AIPlayerMovement>();
+            if (ai != null){
+                ai.EmergencyStop(); // 新增紧急停止方法
+            }
+        }
     }
 }

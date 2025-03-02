@@ -20,6 +20,10 @@ public class BallController : MonoBehaviour
         {
             Instance = this;
         }
+        else
+        {
+            Destroy(gameObject);
+        }
         rb = GetComponent<Rigidbody>();
         startPosition = transform.position;
     }
@@ -27,39 +31,53 @@ public class BallController : MonoBehaviour
     // 使用碰撞检测替代Y轴位置判断
     private void OnCollisionEnter(Collision collision)
     {
-        // Court scoring logic
-        if (collision.gameObject.CompareTag("PlayerCourt"))
+        if (isResetting || GameplayManager.Instance == null) return;
+
+        // 统一处理所有地面碰撞
+        if (collision.gameObject.CompareTag("PlayerCourt") || 
+            collision.gameObject.CompareTag("OpponentCourt") ||
+            collision.gameObject.CompareTag("Ground"))
+        {
+            HandleLanding(collision.gameObject);
+        }
+    }
+
+    private void HandleLanding(GameObject surface)
+    {
+        if (isResetting) return;
+        isResetting = true;
+
+        // 立即处理得分逻辑
+        if (surface.CompareTag("PlayerCourt"))
         {
             UIController.Instance?.AddOpponentScore();
-            ResetBall();
         }
-        else if (collision.gameObject.CompareTag("OpponentCourt"))
+        else if (surface.CompareTag("OpponentCourt"))
         {
             UIController.Instance?.AddPlayerScore();
-            ResetBall();
         }
-        else if (collision.gameObject.CompareTag("Ground") && !isResetting)
+        else
         {
-            Debug.Log("球已落地，3秒后重置");
-            isResetting = true;
-            StartCoroutine(DelayedReset());
+            HandleOutOfBounds();
         }
+        
+        StartCoroutine(DelayedReset());
     }
 
     private IEnumerator DelayedReset()
     {
-        // 禁用球物理
-        rb.isKinematic = true;
-        
-        // 等待3秒
+        // 阶段1：立即冻结AI
+        PlayerManager.Instance.StopAllAIPlayers();
+
+        // 阶段2：等待期间保持物理模拟
         yield return new WaitForSeconds(3f);
-        
-        // 执行重置
+
+        // 阶段3：执行重置
+        rb.isKinematic = true;
         ResetBall();
         GameplayManager.Instance.ResetGameState();
-        
-        // 恢复物理
         rb.isKinematic = false;
+        
         isResetting = false;
     }
 

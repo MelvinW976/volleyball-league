@@ -71,12 +71,8 @@ public class PlayerServe : MonoBehaviour
     {
         GameObject activePlayerObj = PlayerManager.Instance.ActivePlayer;
         if (activePlayerObj == null) return false;
-        Debug.Log("activePlayerObj: " + activePlayerObj);
         PlayerController activePlayer = activePlayerObj.GetComponent<PlayerController>();
         if (activePlayer?.StateMachine?.CurrentState == null) return false;
-        Debug.Log("activePlayer.StateMachine.CurrentState: " + activePlayer.StateMachine.CurrentState);
-        Debug.Log("InServeZone: " + InServeZone);
-        Debug.Log("IsHoldingBall: " + IsHoldingBall);
         return activePlayer.StateMachine.CurrentState.CanServe(activePlayer) &&
                InServeZone &&
                IsHoldingBall;

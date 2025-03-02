@@ -8,6 +8,7 @@ public class AIPlayerMovement : MonoBehaviour
     [SerializeField] private float passBallRadius = 2f;
     private bool canPass = false;
     public bool canMove = false;
+    private BallController currentBall;
 
     void Start()
     {
@@ -16,16 +17,23 @@ public class AIPlayerMovement : MonoBehaviour
         agent.stoppingDistance = 0.5f; // Stop threshold
         agent.autoBraking = true;      // Enable auto-brake
         agent.acceleration = 8f;       // Movement smoothness
-        agent.speed = 5f;
+        agent.speed = GetComponent<PlayerController>().MoveSpeed;
         targetPosition = transform.position; // Initial position
     }
 
     void Update()
     {
         if (!canMove) return;
-
+        
+        // 每次更新时获取最新球实例
+        currentBall = BallController.Instance;
+        
+        if (currentBall == null) return;
+        
+        Vector3 targetPosition = GetBallLandingPosition();
+        
         // 获取球的预测落点
-        Vector3 ballLandingPos = GetBallLandingPosition();
+        Vector3 ballLandingPos = targetPosition;
         
         // 检查落点是否在对方场地（XZ平面）
         // bool isLandingInOpponentCourt = GameplayManager.Instance.IsPositionInCourt(ballLandingPos, false);
@@ -89,11 +97,27 @@ public class AIPlayerMovement : MonoBehaviour
 
     private Vector3 GetBallLandingPosition()
     {
-        BallController ball = FindAnyObjectByType<BallController>();
-        if (ball != null) 
-        {
-            return ball.CalculateLandingPosition();
-        }
-        return transform.position; // Fallback to own position
+        // 添加空引用检查
+        return currentBall != null ? currentBall.CalculateLandingPosition() : transform.position;
     }
+
+    public void EmergencyStop()
+    {
+        if (agent != null && agent.isActiveAndEnabled)
+        {
+            agent.ResetPath();
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero;
+        }
+        canMove = false;
+        Debug.Log($"AI {name} 紧急制动");
+    }
+
+    public void ResetAI()
+    {
+        EmergencyStop();
+        currentBall = null;
+        canPass = false;
+    }
+
 }

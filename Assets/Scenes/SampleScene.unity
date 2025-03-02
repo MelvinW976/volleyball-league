@@ -1503,7 +1503,9 @@ GameObject:
   - component: {fileID: 685400036}
   - component: {fileID: 685400035}
   - component: {fileID: 685400037}
+  - component: {fileID: 685400040}
   - component: {fileID: 685400038}
+  - component: {fileID: 685400039}
   m_Layer: 6
   m_Name: Volleyball_player2
   m_TagString: MyOpponent
@@ -1758,6 +1760,34 @@ MonoBehaviour:
   setTarget: {fileID: 837240119}
   circleRenderer: {fileID: 1264603726}
   aiPlayer: {fileID: 0}
+--- !u!114 &685400039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 685400025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0126554576dfd402fbed6fd761abc6f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &685400040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 685400025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13aa2eca6fbca42b780f406e59363c37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  StateMachine: {fileID: 0}
+  Rb: {fileID: 0}
+  MoveSpeed: 5
+  PassForce: 8
 --- !u!1 &707449243
 GameObject:
   m_ObjectHideFlags: 0
@@ -6909,6 +6939,9 @@ GameObject:
   - component: {fileID: 837240120}
   - component: {fileID: 837240121}
   - component: {fileID: 837240122}
+  - component: {fileID: 837240125}
+  - component: {fileID: 837240124}
+  - component: {fileID: 837240123}
   m_Layer: 6
   m_Name: Volleyball_player1
   m_TagString: MyPlayer
@@ -7130,6 +7163,49 @@ MonoBehaviour:
   setTarget: {fileID: 685400033}
   circleRenderer: {fileID: 1264603726}
   aiPlayer: {fileID: 685400035}
+--- !u!114 &837240123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 837240111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13aa2eca6fbca42b780f406e59363c37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  StateMachine: {fileID: 0}
+  Rb: {fileID: 0}
+  MoveSpeed: 5
+  PassForce: 8
+--- !u!114 &837240124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 837240111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0126554576dfd402fbed6fd761abc6f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &837240125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 837240111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e741851cba3ad425c91ecf922cc6b379, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _data:
+    _json: '{"declarations":{"Kind":"Object","collection":{"$content":[],"$version":"A"},"$version":"A"}}'
+    _objectReferences: []
 --- !u!4 &971843013 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: bd81303305d864077a2f7be50f98ef37, type: 3}
