@@ -14,6 +14,12 @@ public class PlayerServe : MonoBehaviour
     
     [Header("Ball Handling")]
     [SerializeField] private Transform ballHolder;
+
+    [Header("Random Range")]
+    [SerializeField] private UnityEngine.Vector2 horizontalRange = new (-0.2f, 0.2f);
+    [SerializeField] private UnityEngine.Vector2 verticalRange = new (0.8f, 1.2f);
+    [SerializeField] private UnityEngine.Vector2 forceVariationRange = new (0.9f, 1.1f);
+    [SerializeField] private UnityEngine.Vector2 spinIntensityRange = new (0f, 1f);
     
     private Rigidbody ballRb;
     private float currentServeAngle;
@@ -90,7 +96,9 @@ public class PlayerServe : MonoBehaviour
         ballRb.isKinematic = false;
         
         Vector3 courtTarget = GameplayManager.Instance.GetCourtCenter(false);
-        Vector3 forceVector = CalculatePassForce(ballSpawnPoint.position, courtTarget);
+        Vector3 randomOffset = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
+        Vector3 finalTarget = courtTarget + randomOffset;
+        Vector3 forceVector = CalculatePassForce(ballSpawnPoint.position, finalTarget);
         ballRb.linearVelocity = forceVector;
 
         PlayerManager.Instance.EnablePlayerControl(true);
@@ -99,7 +107,7 @@ public class PlayerServe : MonoBehaviour
 
     private Vector3 CalculatePassForce(Vector3 startPos, Vector3 targetPos)
     {
-        float timeToTarget = 1.5f;
+        float timeToTarget = 2f;
         Vector3 toTarget = targetPos - startPos;
         Vector3 toTargetXZ = new Vector3(toTarget.x, 0, toTarget.z);
 

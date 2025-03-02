@@ -1760,6 +1760,8 @@ MonoBehaviour:
   circleRenderer: {fileID: 1264603726}
   aiPlayer: {fileID: 0}
   passBallRadius: 2
+  airDrag: 0.1
+  spinForce: 1
 --- !u!114 &685400039
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1786,7 +1788,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StateMachine: {fileID: 0}
   Rb: {fileID: 0}
-  MoveSpeed: 8
+  MoveSpeed: 12
   PassForce: 8
 --- !u!1 &707449243
 GameObject:
@@ -7163,6 +7165,8 @@ MonoBehaviour:
   circleRenderer: {fileID: 1264603726}
   aiPlayer: {fileID: 685400035}
   passBallRadius: 2
+  airDrag: 0.1
+  spinForce: 1
 --- !u!114 &837240123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13669,6 +13673,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lastTouchedTeam: 
   lastTouchedPlayer: {fileID: 0}
+  airDrag: 0.05
+  angularDrag: 0.1
+  bounciness: 0.1
+  dynamicFriction: 0.2
 --- !u!1 &1833558801
 GameObject:
   m_ObjectHideFlags: 3

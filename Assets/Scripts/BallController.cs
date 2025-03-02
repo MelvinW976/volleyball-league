@@ -13,6 +13,12 @@ public class BallController : MonoBehaviour
     public GameObject lastTouchedPlayer;
     public static BallController Instance { get; private set; }
     private bool isResetting; // 新增重置状态标志
+    [SerializeField] private float airDrag = 0.2f;
+    [SerializeField] private float angularDrag = 0.5f;
+    [SerializeField] private float bounciness = 0.8f;
+    [SerializeField] private float dynamicFriction = 0.4f;
+
+    private PhysicsMaterial ballMaterial;
 
     void Awake()
     {
@@ -26,6 +32,34 @@ public class BallController : MonoBehaviour
         }
         rb = GetComponent<Rigidbody>();
         startPosition = transform.position;
+        rb.linearDamping = airDrag;
+        rb.angularDamping = angularDrag;
+
+        // 创建物理材质（仅一次）
+        ballMaterial = new PhysicsMaterial();
+        ballMaterial.bounciness = bounciness;
+        ballMaterial.dynamicFriction = dynamicFriction;
+        GetComponent<Collider>().material = ballMaterial;
+    }
+
+    void FixedUpdate()
+    {
+        // 统一处理空气阻力
+        if (!IsGrounded())
+        {
+            // 动态调整阻力系数
+            float speedFactor = Mathf.Clamp01(rb.linearVelocity.magnitude / 20f);
+            rb.linearDamping = airDrag * speedFactor;
+        }
+        else
+        {
+            rb.linearDamping = 0f;
+        }
+    }
+
+    private bool IsGrounded()
+    {
+        return Physics.Raycast(transform.position, Vector3.down, 0.1f);
     }
 
     // 使用碰撞检测替代Y轴位置判断

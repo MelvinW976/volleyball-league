@@ -20,6 +20,9 @@ public class PlayerSet : MonoBehaviour
     // Add this property to track setting completion
     public bool IsSettingComplete { get; private set; } = false;
 
+    [SerializeField] private float airDrag = 0.1f;
+    [SerializeField] private float spinForce = 1f;
+
     void Start()
     {
         playerManager = PlayerManager.Instance;
@@ -82,10 +85,17 @@ public class PlayerSet : MonoBehaviour
 
         Vector3 initialVelocity = CalculateVelocity(startPoint, endPoint);
 
-        // Apply an upward and forward force to the ball
-        ballRb.linearVelocity = Vector3.zero; // Reset the ball's velocity
-        ballRb.angularVelocity = Vector3.zero; // Reset the ball's rotation
-        ballRb.AddForce(initialVelocity, ForceMode.VelocityChange);
+        // 修改力作用方式
+        Vector3 hitPointOffset = transform.forward * 0.3f; // 模拟击球点偏移
+        Vector3 torqueAxis = Vector3.Cross(hitPointOffset.normalized, initialVelocity.normalized);
+        
+        ballRb.linearVelocity = Vector3.zero;
+        ballRb.angularVelocity = Vector3.zero;
+        
+        // 使用Impulse模式更符合物理规律
+        ballRb.AddForce(initialVelocity, ForceMode.Impulse);
+        ballRb.AddTorque(torqueAxis * spinForce, ForceMode.Impulse);
+
         Debug.Log(playerManager.ActivePlayer.name + " set the ball!");
         canSet = false; // Prevent multiple sets until the ball re-enters the trigger
         BallController.Instance.lastTouchedTeam = playerManager.ActivePlayer.CompareTag("MyPlayer") ? "Player" : "Opponent";
@@ -179,11 +189,5 @@ public class PlayerSet : MonoBehaviour
     {
         if (currentBall == null) return false;
         return Vector3.Distance(transform.position, currentBall.transform.position) < passBallRadius;
-    }
-
-    // Add a method to reset the flag when needed
-    public void ResetSetState()
-    {
-        IsSettingComplete = false;
     }
 } 
