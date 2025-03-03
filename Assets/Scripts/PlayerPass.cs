@@ -12,8 +12,6 @@ public class PlayerPass : MonoBehaviour
     public CircleRenderer circleRenderer;    // Replace the original landingIndicator and currentIndicator
 
     [Header("AI Player Control")]
-    [SerializeField] private AIPlayerMovement aiPlayer; 
-
     [SerializeField] private float passSearchRadius = 5f;
 
     void Start(){
@@ -101,6 +99,8 @@ public class PlayerPass : MonoBehaviour
             Debug.Log("已达最大传球次数，不能传球");
             return;
         }
+        gameObject.GetComponent<PlayerController>()
+            .StateMachine.ChangeState(new PlayerStates.PassState());
         
         passTarget = FindPassTarget();
         Vector3 startPoint = ballRb.position;
@@ -119,15 +119,6 @@ public class PlayerPass : MonoBehaviour
         BallController.Instance.lastTouchedPlayer = gameObject;
         PlayerManager.Instance.OnPassCompleted();
 
-        // Update AI target position
-        if(aiPlayer != null)
-        {
-            aiPlayer.SetTargetPosition(endPoint); 
-        }
-
-        gameObject.GetComponent<PlayerController>()
-            .StateMachine.ChangeState(new PlayerStates.PassState());
-
         // 通知GameplayManager处理触球
         GameplayManager.Instance.HandleBallTouch(gameObject);
     }
@@ -140,14 +131,6 @@ public class PlayerPass : MonoBehaviour
         {
             setComponent.PerformSet();
         }
-    }
-
-    private Vector3 AdjustLandingPosition(Vector3 originalPos)
-    {
-        bool isPlayer = gameObject.CompareTag("MyPlayer");
-        return GameplayManager.Instance.IsPositionInCourt(originalPos, !isPlayer) ? 
-               originalPos : 
-               GameplayManager.Instance.GetCourtCenter(!isPlayer);
     }
 
     private void OnTriggerEnter(Collider other)

@@ -12,7 +12,7 @@ public class GameplayManager : MonoBehaviour
     // 球权和触球计数
     public enum Possession { Neutral, Player, Opponent }
     public Possession CurrentPossession { get; set; } = Possession.Neutral;
-    private int currentTouchCount = 0;
+    private int currentTouchCount = 1;
 
     public bool isResetting { get; set; } = false; // 新增重置状态标志
 
@@ -60,7 +60,9 @@ public class GameplayManager : MonoBehaviour
         // 检查球权是否变化
         if (newPossession == CurrentPossession)
         {
+            // 当前触球次数加1
             currentTouchCount++;
+            Debug.Log($"当前触球次数: {currentTouchCount}");
             
             // 检查是否超过三次触球
             if (currentTouchCount > 3)
@@ -149,11 +151,11 @@ public class GameplayManager : MonoBehaviour
     // 判断当前是否可以执行特定操作
     public bool CanPass()
     {
-        return currentTouchCount < 3;
+        return currentTouchCount < 2;
     }
     
     // 判断是否可以垫球
-    public bool CanSet() => currentTouchCount == 3;
+    public bool CanSet() => currentTouchCount == 2;
 
     public string winningTeam;
     // 本回合是否发过球

@@ -91,7 +91,7 @@ public class PlayerManager : MonoBehaviour
     public void OnPassCompleted()
     {
         SwitchPlayer(ActivePlayer.CompareTag("MyPlayer") ? "MyPlayer": "MyOpponent");
-        SwitchAllToReceiveState(false); // 不重置位置
+        // SwitchAllToReceiveState(false); // 不重置位置
     }
 
     public void ResetAllPlayers()

@@ -14,7 +14,6 @@ public class PlayerSet : MonoBehaviour
     public CircleRenderer circleRenderer;    // Replace the original landingIndicator and currentIndicator
     
     [Header("AI Player Control")]
-    [SerializeField] private AIPlayerMovement aiPlayer; 
     [SerializeField] private float passBallRadius = 2f;
 
     // Add this property to track setting completion
@@ -77,61 +76,73 @@ public class PlayerSet : MonoBehaviour
 
     public void PerformSet()
     {
-        // 检查是否是第三次触球
+        // 检查是否可以垫球
         if (GameplayManager.Instance != null && !GameplayManager.Instance.CanSet())
         {
-            int touchCount = GameplayManager.Instance.GetCurrentTouchCount();
-            if (touchCount < 3)
-            {
-                Debug.Log($"当前是第{touchCount}次触球，应该传球而不是垫球");
-            }
-            else if (touchCount > 3)
-            {
-                Debug.Log("已超过最大触球次数");
-            }
+            Debug.Log("未达垫球次数要求，不能垫球");
             return;
         }
         
+        // 使用原始逻辑获取球引用
+        if (ballRb == null)
+        {
+            ballRb = GameObject.FindGameObjectWithTag("Ball")?.GetComponent<Rigidbody>();
+            if (ballRb == null)
+            {
+                Debug.LogError("无法找到球的Rigidbody");
+                return;
+            }
+        }
+        
+
+        
+        bool isPlayer = gameObject.CompareTag("MyPlayer");
+        // 使用原始的速度计算逻辑
         Vector3 startPoint = ballRb.position;
-        Vector3 endPoint = setTarget.position;
+        Vector3 targetPosition = GameplayManager.Instance.GetCourtCenter(!isPlayer);
+        Vector3 initialVelocity = CalculateVelocity(startPoint, targetPosition);
         
-        // Validate landing position
-        endPoint = AdjustLandingPosition(endPoint);
-
-        Vector3 initialVelocity = CalculateVelocity(startPoint, endPoint);
-
-        // 修改力作用方式
-        Vector3 hitPointOffset = transform.forward * 0.3f; // 模拟击球点偏移
-        Vector3 torqueAxis = Vector3.Cross(hitPointOffset.normalized, initialVelocity.normalized);
-        
+        // 重置球的当前速度，避免叠加效果
         ballRb.linearVelocity = Vector3.zero;
         ballRb.angularVelocity = Vector3.zero;
         
-        // 使用Impulse模式更符合物理规律
+        // 应用力 - 使用原始的力度和方向
         ballRb.AddForce(initialVelocity, ForceMode.Impulse);
-        ballRb.AddTorque(torqueAxis * spinForce, ForceMode.Impulse);
-
-        Debug.Log(playerManager.ActivePlayer.name + " set the ball!");
-        canSet = false; // Prevent multiple sets until the ball re-enters the trigger
-        BallController.Instance.lastTouchedTeam = playerManager.ActivePlayer.CompareTag("MyPlayer") ? "Player" : "Opponent";
-        BallController.Instance.lastTouchedPlayer = gameObject;
-        playerManager.OnSetCompleted(); // You may want to rename this method as well
-        // Set the completion flag to true when setting is done
-        IsSettingComplete = true;
-
-        // Update AI target position
-        if(aiPlayer != null)
+        
+        // 添加旋转力 - 如果原始代码有这部分
+        if (spinForce > 0)
         {
-            aiPlayer.SetTargetPosition(endPoint); 
+            Vector3 spinAxis = Vector3.Cross(Vector3.up, initialVelocity.normalized);
+            ballRb.AddTorque(spinAxis * spinForce, ForceMode.Impulse);
         }
-    }
-
-    private Vector3 AdjustLandingPosition(Vector3 originalPos)
-    {
-        bool isPlayer = gameObject.CompareTag("MyPlayer");
-        return GameplayManager.Instance.IsPositionInCourt(originalPos, !isPlayer) ? 
-               originalPos : 
-               GameplayManager.Instance.GetCourtCenter(!isPlayer);
+        
+        // 设置空气阻力 - 如果原始代码有这部分
+        ballRb.linearDamping = airDrag;
+        
+        Debug.Log($"{gameObject.name} 执行垫球，目标: {targetPosition}, 初速度: {initialVelocity}");
+        
+        // 更新球的最后触碰信息
+        if (BallController.Instance != null)
+        {
+            BallController.Instance.lastTouchedTeam = gameObject.CompareTag("MyPlayer") ? "Player" : "Opponent";
+            BallController.Instance.lastTouchedPlayer = gameObject;
+        }
+        
+        // 通知GameplayManager处理触球
+        if (GameplayManager.Instance != null)
+        {
+            GameplayManager.Instance.HandleBallTouch(gameObject);
+        }
+        
+        // 更新状态机
+        PlayerController controller = GetComponent<PlayerController>();
+        if (controller != null && controller.StateMachine != null)
+        {
+            controller.StateMachine.ChangeState(new PlayerStates.SetState());
+        }
+        
+        // 标记垫球完成
+        IsSettingComplete = true;
     }
 
     private void OnTriggerEnter(Collider other)
