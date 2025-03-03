@@ -12,13 +12,16 @@ public class BallController : MonoBehaviour
     public string lastTouchedTeam = "";
     public GameObject lastTouchedPlayer;
     public static BallController Instance { get; private set; }
-    private bool isResetting; // 新增重置状态标志
     [SerializeField] private float airDrag = 0.2f;
     [SerializeField] private float angularDrag = 0.5f;
     [SerializeField] private float bounciness = 0.8f;
     [SerializeField] private float dynamicFriction = 0.4f;
 
     private PhysicsMaterial ballMaterial;
+
+    public void setKinematic(bool isKinematic){
+        rb.isKinematic = isKinematic;
+    }
 
     void Awake()
     {
@@ -65,7 +68,7 @@ public class BallController : MonoBehaviour
     // 使用碰撞检测替代Y轴位置判断
     private void OnCollisionEnter(Collision collision)
     {
-        if (isResetting || GameplayManager.Instance == null) return;
+        if (GameplayManager.Instance.isResetting || GameplayManager.Instance == null) return;
 
         // 统一处理所有地面碰撞
         if (collision.gameObject.CompareTag("PlayerCourt") || 
@@ -78,8 +81,8 @@ public class BallController : MonoBehaviour
 
     private void HandleLanding(GameObject surface)
     {
-        if (isResetting) return;
-        isResetting = true;
+        if (GameplayManager.Instance.isResetting) return;
+        GameplayManager.Instance.isResetting = true;
 
         // 立即处理得分逻辑
         if (surface.CompareTag("PlayerCourt"))
@@ -94,26 +97,9 @@ public class BallController : MonoBehaviour
         {
             HandleOutOfBounds();
         }
-        
-        StartCoroutine(DelayedReset());
+        GameplayManager.Instance.GameplayReset();
     }
 
-    private IEnumerator DelayedReset()
-    {
-        // 阶段1：立即冻结AI
-        PlayerManager.Instance.StopAllAIPlayers();
-
-        // 阶段2：等待期间保持物理模拟
-        yield return new WaitForSeconds(3f);
-
-        // 阶段3：执行重置
-        rb.isKinematic = true;
-        ResetBall();
-        GameplayManager.Instance.ResetGameState();
-        rb.isKinematic = false;
-        
-        isResetting = false;
-    }
 
     public void ResetBall()
     {

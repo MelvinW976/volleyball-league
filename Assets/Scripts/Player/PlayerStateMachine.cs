@@ -20,6 +20,7 @@ public class PlayerStateMachine : MonoBehaviour
 
     public void ChangeState(PlayerState newState)
     {
+        Debug.Log(player.name + "从" + currentState?.GetType().Name + "  切换到" + newState.GetType().Name + "  状态");
         currentState?.Exit(player);
         currentState = newState;
         currentState?.Enter(player);

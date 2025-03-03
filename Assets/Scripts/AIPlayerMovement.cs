@@ -24,6 +24,7 @@ public class AIPlayerMovement : MonoBehaviour
     void Update()
     {
         if (!canMove) return;
+        if (PlayerManager.Instance.ActivePlayer != this.gameObject) return;
         
         // 每次更新时获取最新球实例
         currentBall = BallController.Instance;
@@ -47,7 +48,8 @@ public class AIPlayerMovement : MonoBehaviour
         // 如果AI球员在场上 并且AI球员与球的距离大于1米，则移动AI球员到球的落点
         if (Vector3.Distance(ballLandingPos, transform.position) < 1f){
             agent.isStopped = true;
-            if (canPass) TrySetBall();
+            if (GameplayManager.Instance.CanSet()) TrySetBall();
+            else if (GameplayManager.Instance.CanPass()) TryPassBall();
         }
         else if (agent.isOnNavMesh)
         {
@@ -95,6 +97,19 @@ public class AIPlayerMovement : MonoBehaviour
         }
     }
 
+
+    // Add pass method
+    private void TryPassBall()
+    {
+        // 停止移动并执行垫球
+        PlayerPass passComponent = GetComponent<PlayerPass>();
+        if (passComponent != null)
+        {
+            passComponent.PerformPass();
+            canPass = false; // Reset pass state
+        }
+    }
+
     private Vector3 GetBallLandingPosition()
     {
         // 添加空引用检查
@@ -110,7 +125,6 @@ public class AIPlayerMovement : MonoBehaviour
             agent.velocity = Vector3.zero;
         }
         canMove = false;
-        Debug.Log($"AI {name} 紧急制动");
     }
 
     public void ResetAI()

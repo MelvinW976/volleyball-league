@@ -15,4 +15,9 @@ public abstract class PlayerState
     {
         return true;
     }
+    
+    public virtual bool CanPass(PlayerController player)
+    {
+        return true;
+    }
 } 

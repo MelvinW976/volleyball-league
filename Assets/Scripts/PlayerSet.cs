@@ -77,6 +77,21 @@ public class PlayerSet : MonoBehaviour
 
     public void PerformSet()
     {
+        // 检查是否是第三次触球
+        if (GameplayManager.Instance != null && !GameplayManager.Instance.CanSet())
+        {
+            int touchCount = GameplayManager.Instance.GetCurrentTouchCount();
+            if (touchCount < 3)
+            {
+                Debug.Log($"当前是第{touchCount}次触球，应该传球而不是垫球");
+            }
+            else if (touchCount > 3)
+            {
+                Debug.Log("已超过最大触球次数");
+            }
+            return;
+        }
+        
         Vector3 startPoint = ballRb.position;
         Vector3 endPoint = setTarget.position;
         

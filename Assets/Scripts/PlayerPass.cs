@@ -2,12 +2,11 @@ using UnityEngine;
 
 public class PlayerPass : MonoBehaviour
 {
-    public Rigidbody ballRb;                // Reference to the ball's Rigidbody
-    public Transform passTarget;             // The teammate or direction to pass to
+    private Transform passTarget;
+    private Rigidbody ballRb;
     private readonly float passRadius = 5f;
     private readonly float timeToTarget = 2f;
     private bool canPass = false;
-    private PlayerManager playerManager;
 
     [Header("Landing Indicator")]
     public CircleRenderer circleRenderer;    // Replace the original landingIndicator and currentIndicator
@@ -15,11 +14,10 @@ public class PlayerPass : MonoBehaviour
     [Header("AI Player Control")]
     [SerializeField] private AIPlayerMovement aiPlayer; 
 
+    [SerializeField] private float passSearchRadius = 5f;
+
     void Start(){
-        playerManager = PlayerManager.Instance;
-        if (playerManager == null) {
-            Debug.LogError("PlayerManager instance not found!");
-        }
+
     }
 
     void Update()
@@ -66,13 +64,47 @@ public class PlayerPass : MonoBehaviour
         return result;
     }
 
+    private Transform FindPassTarget()
+    {
+        // 直接获取第一个同队玩家
+        GameObject[] teammates = GameObject.FindGameObjectsWithTag(gameObject.tag);
+        
+        foreach (var player in teammates)
+        {
+            if (player != gameObject)
+            {
+                return player.transform; // 直接返回唯一队友
+            }
+        }
+        
+        return transform; // 没有队友时传给自身位置（安全回退）
+    }
+
     public void PerformPass()
     {
+        // 强制检查触球次数规则
+        if (GameplayManager.Instance != null && !GameplayManager.Instance.CanPass())
+        {
+            Debug.Log($"当前是第{GameplayManager.Instance.GetCurrentTouchCount()}次触球，必须垫球!");
+            // 可选：自动切换到垫球
+            TryAutoSwitchToSet();
+            return;
+        }
+        
+        ballRb = BallController.Instance.GetComponent<Rigidbody>();
+        if (ballRb == null){
+            Debug.LogError("BallRigidbody instance not found!");
+        }
+        // 检查是否可以传球
+        if (!GameplayManager.Instance.CanPass())
+        {
+            Debug.Log("已达最大传球次数，不能传球");
+            return;
+        }
+        
+        passTarget = FindPassTarget();
         Vector3 startPoint = ballRb.position;
         Vector3 endPoint = passTarget.position;
-        
-        // Validate landing position
-        endPoint = AdjustLandingPosition(endPoint);
 
         Vector3 initialVelocity = CalculateVelocity(startPoint, endPoint);
 
@@ -80,16 +112,33 @@ public class PlayerPass : MonoBehaviour
         ballRb.linearVelocity = Vector3.zero; // Reset the ball's velocity
         ballRb.angularVelocity = Vector3.zero; // Reset the ball's rotation
         ballRb.AddForce(initialVelocity, ForceMode.VelocityChange);
-        Debug.Log(playerManager.ActivePlayer.name + " passed the ball!");
+        Debug.Log(gameObject.name + " passed the ball!");
+
         canPass = false; // Prevent multiple passes until the ball re-enters the trigger
-        BallController.Instance.lastTouchedTeam = playerManager.ActivePlayer.CompareTag("MyPlayer") ? "Player" : "Opponent";
+        BallController.Instance.lastTouchedTeam = gameObject.CompareTag("MyPlayer") ? "Player" : "Opponent";
         BallController.Instance.lastTouchedPlayer = gameObject;
-        playerManager.OnPassCompleted();
+        PlayerManager.Instance.OnPassCompleted();
 
         // Update AI target position
         if(aiPlayer != null)
         {
             aiPlayer.SetTargetPosition(endPoint); 
+        }
+
+        gameObject.GetComponent<PlayerController>()
+            .StateMachine.ChangeState(new PlayerStates.PassState());
+
+        // 通知GameplayManager处理触球
+        GameplayManager.Instance.HandleBallTouch(gameObject);
+    }
+
+    // 添加自动切换到垫球的方法
+    private void TryAutoSwitchToSet()
+    {
+        PlayerSet setComponent = GetComponent<PlayerSet>();
+        if (setComponent != null && setComponent.enabled)
+        {
+            setComponent.PerformSet();
         }
     }
 

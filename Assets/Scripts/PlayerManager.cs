@@ -15,9 +15,6 @@ public class PlayerManager : MonoBehaviour
     private GameObject _activePlayer;
     public GameObject ActivePlayer => _activePlayer;  // Public getter for activePlayer
 
-    public enum Possession { Neutral, Player, Opponent }
-    public Possession CurrentPossession { get; private set; } = Possession.Neutral;
-
     void Awake()
     {
         if (Instance == null) {
@@ -36,7 +33,7 @@ public class PlayerManager : MonoBehaviour
 
     public void SetActivePlayer(GameObject curPlayer)
     {
-        if (curPlayer == null || !curPlayer.CompareTag("MyPlayer")) 
+        if (curPlayer == null) 
         {
             Debug.LogError("SetActivePlayer: Invalid player selection!");
             return;
@@ -50,10 +47,13 @@ public class PlayerManager : MonoBehaviour
         // 禁用其他玩家控制
         foreach (GameObject player in players.Where(p => p != _activePlayer)) 
         {
-            player.GetComponent<PlayerMovement>().enabled = false;
-            player.GetComponent<PlayerSet>().enabled = false;
+            // 禁用AI球员控制
+            if (player.GetComponent<AIPlayerMovement>() != null){
+                player.GetComponent<PlayerMovement>().enabled = false;
+                player.GetComponent<PlayerSet>().enabled = false;
+            }
         }
-        
+    
         HighlightActivePlayer();
     }
 
@@ -76,28 +76,22 @@ public class PlayerManager : MonoBehaviour
     }
 
     void Update() {
-        if (Input.GetKeyDown(KeyCode.Tab)) {
-            SwitchPlayer();
-        }
     }
 
-    private void SwitchPlayer()
+    private void SwitchPlayer(string tagName)
     {
-        // 只在自己队伍玩家中切换
-        var teamPlayers = players.Where(p => p.CompareTag("MyPlayer")).ToList();
+        var teamPlayers = players.Where(p => p.CompareTag(tagName)).ToList();
         if (teamPlayers.Count == 0) return;
         
         currentPlayerIndex = (currentPlayerIndex + 1) % teamPlayers.Count;
         SetActivePlayer(teamPlayers[currentPlayerIndex]);
+        Debug.Log(teamPlayers[currentPlayerIndex].name + " is now active");
     }
-    private void SwitchPossession()
-    {
-        CurrentPossession = CurrentPossession == Possession.Player ? Possession.Opponent : Possession.Player;
-        UpdateControl();
-    }
+
     public void OnPassCompleted()
     {
-        SwitchPlayer();
+        SwitchPlayer(ActivePlayer.CompareTag("MyPlayer") ? "MyPlayer": "MyOpponent");
+        SwitchAllToReceiveState(false); // 不重置位置
     }
 
     public void ResetAllPlayers()
@@ -130,31 +124,29 @@ public class PlayerManager : MonoBehaviour
         GameplayManager.Instance.served = true;
 
         // 设置球权并更新控制
-        CurrentPossession = Possession.Opponent;
-        UpdateControl();
-        PlayerManager.Instance.SwitchAllToReceiveState(false);
-        // 延迟切换玩家
-        StartCoroutine(SwitchPlayerNextFrame());
+        GameplayManager.Instance.CurrentPossession = GameplayManager.Possession.Opponent;
+        UpdateControlBasedOnPossession(GameplayManager.Instance.CurrentPossession);
+        SwitchAllToReceiveState(resetPosition: false);
+        SwitchPlayerToOtherSide();
     }
 
-    private IEnumerator SwitchPlayerNextFrame()
-    {
-        yield return null;
-        SwitchPlayer();
+    private void SwitchPlayerToOtherSide(){
+        var tagName = ActivePlayer.CompareTag("MyPlayer") ? "MyOpponent" : "MyPlayer";
+        SwitchPlayer(tagName);
     }
 
-    private void UpdateControl()
+    public void UpdateControlBasedOnPossession(GameplayManager.Possession possession)
     {
-        bool playerControl = CurrentPossession == Possession.Player;
-        bool opponentControl = CurrentPossession == Possession.Opponent;
-
+        bool playerControl = possession == GameplayManager.Possession.Player;
+        bool opponentControl = possession == GameplayManager.Possession.Opponent;
+        
         // 控制玩家
         foreach (GameObject player in players.Where(p => p.CompareTag("MyPlayer"))) 
         {
-            // player.GetComponent<PlayerMovement>().enabled = playerControl;
+            player.GetComponent<PlayerPass>().enabled = playerControl;
             player.GetComponent<PlayerSet>().enabled = playerControl;
         }
-
+        
         // 控制AI
         foreach (GameObject opponent in players.Where(p => p.CompareTag("MyOpponent"))) 
         {
@@ -162,16 +154,10 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    // 在得分后重置球权
-    public void ResetPossession()
-    {
-        CurrentPossession = Possession.Neutral;
-        UpdateControl();
-    }
-
     public void OnSetCompleted()
     {
-        SwitchPossession();
+        GameplayManager.Instance.CurrentPossession = GameplayManager.Possession.Opponent;
+        UpdateControlBasedOnPossession(GameplayManager.Instance.CurrentPossession);
         SwitchAllToReceiveState(false); // 不重置位置
     }
 

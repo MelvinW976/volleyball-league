@@ -6,7 +6,7 @@ namespace PlayerStates
     {
         public override void Enter(PlayerController player)
         {
-            // 确保在服务区且持有球
+            // 确保在服务区
             PlayerServe serveComponent = player.GetComponent<PlayerServe>();
             if (serveComponent != null && serveComponent.InServeZone)
             {
@@ -37,7 +37,6 @@ namespace PlayerStates
 
         public override void Exit(PlayerController player)
         {
-            Debug.Log($"{player.name} 退出发球状态");
         }
 
         public override bool CanServe(PlayerController player)
